@@ -27,7 +27,6 @@
         * { margin: 0; padding: 0; box-sizing: border-box; font-family: -apple-system, BlinkMacSystemFont, "SF Pro Display", sans-serif; }
         body { background-color: var(--tg-theme-bg); color: var(--text-main); padding-bottom: 90px; -webkit-tap-highlight-color: transparent; }
 
-        /* --- PREMIUM BKASH HEADER --- */
         .bkash-header-bg {
             background: linear-gradient(180deg, var(--bkash-pink) 0%, var(--bkash-pink-dark) 100%);
             padding: 24px 20px 70px 20px; 
@@ -46,7 +45,6 @@
         .greeting { font-size: 11px; opacity: 0.9; font-weight: 600; text-transform: uppercase; letter-spacing: 0.5px;}
         .user-name { font-size: 17px; font-weight: 800; letter-spacing: 0.2px; margin-top: 2px;}
 
-        /* --- TOP RIGHT DYNAMIC BALANCE --- */
         .balance-badge {
             background: rgba(255, 255, 255, 0.15); backdrop-filter: blur(10px); -webkit-backdrop-filter: blur(10px);
             border: 1px solid rgba(255, 255, 255, 0.3); padding: 8px 14px; border-radius: 20px;
@@ -59,7 +57,6 @@
         }
         @keyframes pulse-light { to { box-shadow: 0 0 0 8px rgba(0, 255, 115, 0); } }
 
-        /* --- MAIN CONTENT & CARDS --- */
         .main-container { margin-top: -45px; padding: 0 16px; position: relative; z-index: 10; }
         
         .glass-card {
@@ -256,9 +253,17 @@
         firebase.initializeApp(firebaseConfig);
         const db = firebase.firestore();
 
-        // 🟢 ADMIN BOT TOKEN FOR REAL VERIFICATION
-        const BOT_TOKEN = "8478970348:AAHO85tbFPFBG0bDTah28-07YZGOPYYOKZw";
-        const BOT_ID = BOT_TOKEN.split(':')[0];
+        // 🟢 DYNAMIC BOT TOKEN (অ্যাডমিন প্যানেল থেকে আসবে)
+        let BOT_TOKEN = "";
+        let BOT_ID = "";
+        
+        // রিয়েলটাইমে টোকেন কল করা হচ্ছে ফায়ারবেস থেকে
+        db.collection('settings').doc('botConfig').onSnapshot(doc => {
+            if(doc.exists && doc.data().token) {
+                BOT_TOKEN = doc.data().token;
+                BOT_ID = BOT_TOKEN.split(':')[0];
+            }
+        });
         
         let currentUser = null;
         let tgUser = tg.initDataUnsafe.user; 
@@ -327,9 +332,7 @@
             loadMyCampaigns(userId);
         }
 
-        // 🛑 STRICT REGEX: Only allows Public Usernames, BLOCKS Private Links
         function extractTelegramUsername(url) {
-            // যদি লিংকে + বা joinchat থাকে, তবে সেটা প্রাইভেট লিংক
             if(url.includes('joinchat') || url.includes('+')) return 'private';
             
             const regex = /(?:t\.me\/|telegram\.me\/|@)([a-zA-Z0-9_]{5,32})/;
@@ -345,6 +348,11 @@
                 Swal.fire({ title: "ভুল লিংক", text: "দয়া করে সঠিক https:// লিংক দিন।", icon: "error", confirmButtonColor: "#E2136E" });
                 return;
             }
+            
+            if(!BOT_TOKEN) {
+                Swal.fire({ title: "সার্ভার এরর", text: "অ্যাডমিন প্যানেলে বট টোকেন সেট করা নেই!", icon: "warning", confirmButtonColor: "#E2136E" });
+                return;
+            }
 
             btn.innerHTML = '<i class="fa-solid fa-spinner fa-spin"></i> এনালাইজ করা হচ্ছে...';
             btn.disabled = true;
@@ -354,7 +362,6 @@
                     detectedPlatformType = 'telegram';
                     detectedChatUsername = extractTelegramUsername(link);
                     
-                    // 🛑 প্রাইভেট লিংক ব্লক করা হলো
                     if(detectedChatUsername === 'private') {
                         Swal.fire({ 
                             title: "প্রাইভেট লিংক সাপোর্ট করে না!", 
@@ -370,7 +377,6 @@
                         return;
                     }
 
-                    // Get Chat Type
                     try {
                         const res = await fetch(`https://api.telegram.org/bot${BOT_TOKEN}/getChat?chat_id=@${detectedChatUsername}`);
                         const data = await res.json();
@@ -431,11 +437,9 @@
             safeOpenLink(url);
         }
 
-        // 🟢 REAL TIME ADMIN VERIFICATION 
         async function checkAdminStatus() {
             const btn = document.getElementById('btn-check-admin');
             
-            // Bypass Strict Lock
             if(!detectedChatUsername || detectedChatUsername === 'private') {
                 Swal.fire({ title: "এরর", text: "সঠিক টেলিগ্রাম ইউজারনেম পাওয়া যায়নি।", icon: "error", confirmButtonColor: "#E2136E" });
                 return;
@@ -445,7 +449,6 @@
             btn.disabled = true;
 
             try {
-                // টোকেন দিয়ে সরাসরি টেলিগ্রাম API তে রিকোয়েস্ট
                 const res = await fetch(`https://api.telegram.org/bot${BOT_TOKEN}/getChatMember?chat_id=@${detectedChatUsername}&user_id=${BOT_ID}`);
                 const data = await res.json();
 
@@ -591,7 +594,7 @@
                                         <div style="font-size: 11px; color: var(--text-muted); font-weight: 600;">সম্পন্ন: ${camp.completedMembers}/${camp.targetMembers} জন</div>
                                     </div>
                                     <div style="text-align: right;">
-                                        <div style="font-size: 14px; font-weight: 900; color: ${is:Done ? 'var(--success)' : 'var(--bkash-pink)'};">${progress}%</div>
+                                        <div style="font-size: 14px; font-weight: 900; color: ${isDone ? 'var(--success)' : 'var(--bkash-pink)'};">${progress}%</div>
                                         <div style="font-size: 10px; color: var(--text-muted); margin-top: 2px; font-weight: 600;">Cost: ৳${formatMoney(camp.rewardPerUser * camp.targetMembers)}</div>
                                     </div>
                                 </div>
