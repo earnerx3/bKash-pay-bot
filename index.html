@@ -189,7 +189,6 @@
 
         <div class="section-title">টাস্ক কমপ্লিট করুন</div>
         <div class="task-list" id="taskListContainer">
-            <!-- Loading indicator for initial load only -->
             <div style="text-align:center; color:var(--text-muted); font-size:13px; padding: 40px 0; font-weight: 600;">
                 <i class="fa-solid fa-spinner fa-spin" style="font-size: 26px; color: var(--bkash-pink); margin-bottom: 12px;"></i><br>
                 নতুন টাস্ক লোড হচ্ছে...
@@ -209,14 +208,13 @@
         </a>
     </div>
 
-    <!-- Bottom Sheet -->
     <div class="bottom-sheet-overlay" id="taskSheet" onclick="closeSheetOutside(event, 'taskSheet')">
         <div class="bottom-sheet">
             <div class="drag-handle"></div>
             <div class="sheet-header">
                 <div class="sheet-icon" style="background: #FFF0F5; color: var(--bkash-pink);"><i class="fa-brands fa-telegram"></i></div>
                 <div>
-                    <div class="sheet-title">Join Channel / Group</div>
+                    <div class="sheet-title" id="ts-title-text">Join Channel / Group</div>
                     <div id="ts-reward" class="sheet-reward">+ ০.০০ ৳</div>
                 </div>
             </div>
@@ -249,6 +247,9 @@
         firebase.initializeApp(firebaseConfig);
         const db = firebase.firestore();
 
+        // 🟢 ADMIN BOT TOKEN FOR VERIFICATION
+        const BOT_TOKEN = "8478970348:AAHO85tbFPFBG0bDTah28-07YZGOPYYOKZw";
+
         // --- Global Variables ---
         let currentUser = null;
         let tgUser = tg.initDataUnsafe.user;
@@ -262,6 +263,14 @@
 
         function closeSheetOutside(e, sheetId) { if(e.target.id === sheetId) document.getElementById(sheetId).classList.remove('active'); }
         function closeSheet(sheetId) { document.getElementById(sheetId).classList.remove('active'); }
+
+        // Extract Username from Telegram Link
+        function extractTelegramUsername(url) {
+            if(!url) return null;
+            const regex = /(?:t\.me\/|telegram\.me\/|@)([a-zA-Z0-9_]{5,32})/;
+            const match = url.match(regex);
+            return match ? match[1] : null;
+        }
 
         // --- 1. SUPER FAST CACHING SYSTEM ---
         function applyLocalCache() {
@@ -336,7 +345,7 @@
             startTaskListener();
         }
 
-        // --- 3. SMART TASK ENGINE (ULTIMATE FAIL-SAFE) ---
+        // --- 3. SMART TASK ENGINE ---
         function startTaskListener() {
             const container = document.getElementById('taskListContainer');
 
@@ -367,7 +376,6 @@
                         
                         const currentUserId = (tgUser && tgUser.id) ? String(tgUser.id) : '';
                         
-                        // [সিকিউরিটি ও ক্র্যাশ ফিক্স] Data Type Verification
                         let isCompleted = false;
                         if (currentUser && currentUser.completedTasks && Array.isArray(currentUser.completedTasks)) {
                             isCompleted = currentUser.completedTasks.includes(taskId);
@@ -380,17 +388,25 @@
                         taskRendered = true; 
                         const rewardAmt = task.rewardPerUser || 0;
                         const remaining = task.targetMembers - task.completedMembers;
+                        const platformType = task.platformType || 'unknown';
                         
                         const rawLink = task.link ? String(task.link) : '';
                         const safeLink = rawLink.replace(/'/g, "\\'"); 
+                        
+                        let iconClass = 'fa-telegram';
+                        let taskTitle = 'Join Channel / Group';
+                        
+                        if(platformType === 'youtube') { iconClass = 'fa-youtube'; taskTitle = 'Subscribe YouTube'; }
+                        else if(platformType === 'facebook') { iconClass = 'fa-facebook'; taskTitle = 'Follow Facebook'; }
+                        else if(platformType === 'website') { iconClass = 'fa-globe'; taskTitle = 'Visit Website'; }
 
                         generatedHTML += `
-                            <div class="task-box" onclick="prepSecureTask('${taskId}', '${safeLink}', ${rewardAmt})">
+                            <div class="task-box" onclick="prepSecureTask('${taskId}', '${safeLink}', ${rewardAmt}, '${platformType}', '${taskTitle}')">
                                 <div class="task-icon-wrapper">
-                                    <i class="fa-brands fa-telegram"></i>
+                                    <i class="fa-brands ${iconClass}"></i>
                                 </div>
                                 <div class="task-info">
-                                    <div class="task-title">Join Channel / Group</div>
+                                    <div class="task-title">${taskTitle}</div>
                                     <div class="task-desc-short">${remaining} জন বাকি আছে</div>
                                 </div>
                                 <div>
@@ -406,33 +422,22 @@
 
                     container.innerHTML = generatedHTML;
                     
-                    // [ফিক্স] LocalStorage Error Handling
-                    try {
-                        localStorage.setItem('cp_tasks_html', generatedHTML);
-                    } catch(lsError) {
-                        console.warn("Local storage disabled by Telegram", lsError);
-                    }
+                    try { localStorage.setItem('cp_tasks_html', generatedHTML); } catch(lsError) {}
 
                 } catch(error) {
                     console.error("Task Engine Error:", error);
-                    // [ফিক্স] আসল এররটি স্ক্রিনে প্রিন্ট করা
-                    container.innerHTML = `
-                        <div style="text-align:center; color:red; font-size:13px; padding: 30px 20px; font-weight: 600; background:#FFF0F5; border-radius:12px;">
-                            ইন্টারনাল সমস্যা হয়েছে!<br>
-                            <span style="font-size:11px; color:#555; word-break: break-all; margin-top:8px; display:inline-block;">Error: ${error.message}</span>
-                        </div>
-                    `;
+                    container.innerHTML = `<div style="text-align:center; color:red; font-size:13px; padding: 30px 20px; font-weight: 600; background:#FFF0F5; border-radius:12px;">ইন্টারনাল সমস্যা হয়েছে!<br><span style="font-size:11px; color:#555; word-break: break-all; margin-top:8px; display:inline-block;">Error: ${error.message}</span></div>`;
                 }
             }, error => {
-                console.error("Firebase Snapshot Error:", error);
                 container.innerHTML = `<div style="text-align:center; color:red; font-size:13px; padding: 30px 0; font-weight: 600;">ডাটাবেজ কানেকশনে সমস্যা!</div>`;
             });
         }
 
-        // --- 4. SECURE TASK EXECUTION ALGORITHM ---
-        function prepSecureTask(id, link, reward) {
-            activeTaskContext = { id, link, reward, hash: Date.now().toString(36) };
+        // --- 4. SECURE TASK EXECUTION ALGORITHM (ANTI-CHEAT ADDED) ---
+        function prepSecureTask(id, link, reward, platformType, taskTitle) {
+            activeTaskContext = { id, link, reward, platformType, hash: Date.now().toString(36) };
             
+            document.getElementById('ts-title-text').innerText = taskTitle;
             document.getElementById('ts-reward').innerText = `+ ${formatMoney(reward)} ৳`;
             document.getElementById('taskSheet').classList.add('active');
             safeHapticFeedback('light');
@@ -454,8 +459,45 @@
                 didOpen: () => { Swal.showLoading(); }
             });
 
-            await new Promise(resolve => setTimeout(resolve, 1500));
+            // ৫ সেকেন্ড অপেক্ষা করা হচ্ছে যাতে ইউজার লিংকে গিয়ে জয়েন করতে পারে
+            await new Promise(resolve => setTimeout(resolve, 5000));
             
+            // 🟢 টেলিগ্রামের ক্ষেত্রে টোকেন দিয়ে সার্ভার চেকিং
+            if (ctx.platformType === 'telegram') {
+                const chatUsername = extractTelegramUsername(ctx.link);
+                
+                if (chatUsername) {
+                    try {
+                        const res = await fetch(`https://api.telegram.org/bot${BOT_TOKEN}/getChatMember?chat_id=@${chatUsername}&user_id=${tgUser.id}`);
+                        const data = await res.json();
+
+                        // যদি ইউজার জয়েন না করে থাকে বা API কল ফেইল করে
+                        if (!data.ok || (data.result.status !== 'member' && data.result.status !== 'administrator' && data.result.status !== 'creator')) {
+                            safeHapticFeedback('error');
+                            Swal.fire({
+                                title: "চিটিং ধরা পড়েছে! 🚫",
+                                text: "আপনি এখনো গ্রুপ বা চ্যানেলে জয়েন করেননি! দয়া করে ঠিকভাবে জয়েন করে আবার চেষ্টা করুন।",
+                                icon: "error",
+                                confirmButtonColor: "#E2136E"
+                            });
+                            isTaskProcessing = false;
+                            return; // ⛔ এখানেই স্টপ, ডাটাবেজে টাকা যোগ হবে না!
+                        }
+                    } catch(e) {
+                        console.error("Telegram Verify Error", e);
+                        Swal.fire({
+                            title: "সার্ভার এরর",
+                            text: "টেলিগ্রাম সার্ভার চেক করতে পারেনি। একটু পর আবার চেষ্টা করুন।",
+                            icon: "warning",
+                            confirmButtonColor: "#E2136E"
+                        });
+                        isTaskProcessing = false;
+                        return;
+                    }
+                }
+            }
+            
+            // চেকিং সাকসেসফুল হলে এরপর ডাটাবেজে ব্যালেন্স এড হবে
             try {
                 const batch = db.batch();
                 const userRef = db.collection('users').doc(currentUser.userId);
