@@ -216,7 +216,7 @@
             <ul>
                 <li>যেকোনো সোশ্যাল মিডিয়ার (টেলিগ্রাম, ইউটিউব, ফেসবুক) লিংক সাপোর্ট করে।</li>
                 <li>লিংক দেওয়ার পর আমাদের স্মার্ট AI অটোমেটিক প্ল্যাটফর্ম ডিটেক্ট করবে।</li>
-                <li>টেলিগ্রামের ক্ষেত্রে বটকে আপনার গ্রুপ/চ্যানেলে অ্যাডমিন দেওয়া বাধ্যতামূলক এবং লিংকটি <b>অবশ্যই পাবলিক</b> হতে হবে।</li>
+                <li>টেলিগ্রামের ক্ষেত্রে লিংকটি <b>অবশ্যই পাবলিক</b> হতে হবে। অন্যের চ্যানেল বা গ্রুপ দেওয়া যাবে না।</li>
                 <li>রিওয়ার্ড <b>০.৪০ ৳</b> থেকে <b>১০.০০ ৳</b> এর মধ্যে হতে হবে। টার্গেট মেম্বার নূন্যতম ২০ জন হতে হবে।</li>
                 <li>এই অ্যাপটি <b>Firebase Server Transaction</b> দ্বারা সুরক্ষিত। কোনো ধরনের হ্যাকিং বা বাইপাস করার চেষ্টা করলে অ্যাকাউন্ট অটোমেটিক সাসপেন্ড হবে।</li>
             </ul>
@@ -257,7 +257,6 @@
         let BOT_TOKEN = "";
         let BOT_ID = "";
         
-        // রিয়েলটাইমে টোকেন কল করা হচ্ছে ফায়ারবেস থেকে
         db.collection('settings').doc('botConfig').onSnapshot(doc => {
             if(doc.exists && doc.data().token) {
                 BOT_TOKEN = doc.data().token;
@@ -437,6 +436,7 @@
             safeOpenLink(url);
         }
 
+        // 🔥 ডাবল ভেরিফিকেশন: বটের পাশাপাশি ইউজারকেও চেক করবে!
         async function checkAdminStatus() {
             const btn = document.getElementById('btn-check-admin');
             
@@ -449,15 +449,34 @@
             btn.disabled = true;
 
             try {
-                const res = await fetch(`https://api.telegram.org/bot${BOT_TOKEN}/getChatMember?chat_id=@${detectedChatUsername}&user_id=${BOT_ID}`);
-                const data = await res.json();
+                // ১. বট অ্যাডমিন আছে কিনা সেটা চেক
+                const botRes = await fetch(`https://api.telegram.org/bot${BOT_TOKEN}/getChatMember?chat_id=@${detectedChatUsername}&user_id=${BOT_ID}`);
+                const botData = await botRes.json();
 
-                if(data.ok && (data.result.status === 'administrator' || data.result.status === 'creator')) {
-                    safeHapticFeedback('success');
-                    setupStep3Badge();
-                    changeStep('step-2', 'step-3');
+                if(botData.ok && (botData.result.status === 'administrator' || botData.result.status === 'creator')) {
+                    
+                    // ২. ইউজার নিজে চ্যানেলের মালিক/অ্যাডমিন কিনা সেটা চেক (DOUBLE SECURITY)
+                    const userRes = await fetch(`https://api.telegram.org/bot${BOT_TOKEN}/getChatMember?chat_id=@${detectedChatUsername}&user_id=${tgUser.id}`);
+                    const userData = await userRes.json();
+
+                    if(userData.ok && (userData.result.status === 'administrator' || userData.result.status === 'creator')) {
+                        // উভয় শর্ত পূরণ হলে পাস করবে
+                        safeHapticFeedback('success');
+                        setupStep3Badge();
+                        changeStep('step-2', 'step-3');
+                    } else {
+                        // ইউজার যদি অন্যের চ্যানেল দিয়ে থাকে
+                        safeHapticFeedback('error');
+                        Swal.fire({
+                            title: "পারমিশন নেই!",
+                            text: "আপনি এই চ্যানেল/গ্রুপের মালিক বা অ্যাডমিন নন। অন্যের লিংক ব্যবহার করে ক্যাম্পেইন তৈরি করা কঠোরভাবে নিষেধ!",
+                            icon: "error",
+                            confirmButtonColor: "#E2136E"
+                        });
+                    }
+
                 } else {
-                    let failReason = data.description || "বটকে অ্যাডমিন করা হয়নি";
+                    let failReason = botData.description || "আমাদের বটকে অ্যাডমিন করা হয়নি";
                     showAdminErrorAlert(failReason);
                 }
             } catch(e) {
