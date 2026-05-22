@@ -341,11 +341,13 @@
             startTaskListener();
         }
 
-        // --- 3. SMART TASK ENGINE ---
+        // --- 3. SMART TASK ENGINE (UPDATED WITH BUG FIXES) ---
         function startTaskListener() {
+            const container = document.getElementById('taskListContainer');
+
             db.collection('campaigns').where('status', '==', 'active').onSnapshot(snapshot => {
-                const container = document.getElementById('taskListContainer');
                 
+                // ১. যদি ডাটাবেজে কোনো অ্যাক্টিভ টাস্ক না থাকে
                 if(snapshot.empty) {
                     const emptyHTML = `
                         <div style="text-align:center; padding: 40px 20px; background: #fff; border-radius: 20px; border: 1px solid rgba(0,0,0,0.03);">
@@ -371,7 +373,7 @@
                         
                         const currentUserId = (tgUser && tgUser.id) ? String(tgUser.id) : '';
                         
-                        // Security Filters (No client-side manipulation possible here)
+                        // সিকিউরিটি ফিল্টার: নিজে তৈরি করা বা কমপ্লিট করা টাস্ক স্কিপ করা
                         if(task.creatorId && task.creatorId === currentUserId) return;
                         if(currentUser && currentUser.completedTasks && currentUser.completedTasks.includes(taskId)) return;
                         if(task.completedMembers >= task.targetMembers) return;
@@ -379,7 +381,10 @@
                         taskRendered = true; 
                         const rewardAmt = task.rewardPerUser || 0;
                         const remaining = task.targetMembers - task.completedMembers;
-                        const safeLink = task.link ? task.link.replace(/'/g, "\\'") : '';
+                        
+                        // [বাগ ফিক্স] ডাটাবেজ থেকে আসা লিংকটি স্ট্রিং (String) কি না তা নিশ্চিত করা
+                        const rawLink = task.link ? String(task.link) : '';
+                        const safeLink = rawLink.replace(/'/g, "\\'"); 
 
                         generatedHTML += `
                             <div class="task-box" onclick="prepSecureTask('${taskId}', '${safeLink}', ${rewardAmt})">
@@ -397,20 +402,24 @@
                         `;
                     });
 
+                    // যদি ইউজারের জন্য কোনো টাস্ক এভেইলেবল না থাকে
                     if (!taskRendered) {
-                        generatedHTML = '<div style="text-align:center; color:var(--text-muted); font-size:12px; padding: 30px 0;">আপনার জন্য বর্তমানে নতুন কোনো টাস্ক নেই</div>';
+                        generatedHTML = '<div style="text-align:center; color:var(--text-muted); font-size:13px; padding: 30px 0; font-weight: 600;">আপনার জন্য বর্তমানে নতুন কোনো টাস্ক নেই</div>';
                     }
 
-                    // Only update DOM if HTML changed (Saves processing power)
-                    const currentCache = localStorage.getItem('cp_tasks_html');
-                    if(generatedHTML !== currentCache) {
-                        container.innerHTML = generatedHTML;
-                        localStorage.setItem('cp_tasks_html', generatedHTML);
-                    }
+                    // সরাসরি DOM আপডেট করা, যাতে স্পিনারটি সরে যায়
+                    container.innerHTML = generatedHTML;
+                    localStorage.setItem('cp_tasks_html', generatedHTML);
 
                 } catch(error) {
                     console.error("Task Engine Error:", error);
+                    // এরর আসলে স্পিনার সরিয়ে এরর মেসেজ দেখাবে
+                    container.innerHTML = `<div style="text-align:center; color:red; font-size:13px; padding: 30px 0; font-weight: 600;">টাস্ক লোড করতে ইন্টারনাল সমস্যা হয়েছে।</div>`;
                 }
+            }, error => {
+                // [বাগ ফিক্স] ফায়ারবেস থেকে কোনো এরর আসলে সেটা হ্যান্ডেল করা
+                console.error("Firebase Snapshot Error:", error);
+                container.innerHTML = `<div style="text-align:center; color:red; font-size:13px; padding: 30px 0; font-weight: 600;">ডাটাবেজ কানেকশনে সমস্যা! আপনার ইন্টারনেট কানেকশন চেক করুন।</div>`;
             });
         }
 
