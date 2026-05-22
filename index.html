@@ -11,6 +11,9 @@
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
     
+    <!-- Monetag Ad Network SDK (এখানে যুক্ত করা হয়েছে) -->
+    <script src="https://libtl.com/sdk.js" data-zone="11041333" data-sdk="show_11041333"></script>
+    
     <style>
         :root {
             --bkash-pink: #E2136E; 
@@ -40,7 +43,6 @@
 
         .main-container { margin-top: -45px; padding: 0 16px; position: relative; z-index: 10; }
 
-        /* Notice Card Style Added Back */
         .notice-card { background: #ffffff; border-radius: 20px; padding: 16px; margin-bottom: 20px; box-shadow: 0 8px 25px rgba(226, 19, 110, 0.08); border: 1px solid rgba(226, 19, 110, 0.05); display: flex; align-items: flex-start; gap: 14px; }
         .notice-icon { width: 44px; height: 44px; background: #FFF0F5; color: var(--bkash-pink); border-radius: 12px; display: flex; justify-content: center; align-items: center; font-size: 20px; flex-shrink: 0; }
         .notice-content h4 { font-size: 14px; color: var(--text-main); font-weight: 800; margin-bottom: 4px; }
@@ -48,7 +50,6 @@
 
         .section-title { font-size: 13px; font-weight: 800; color: #6e6e73; text-transform: uppercase; margin: 10px 4px 12px 4px; letter-spacing: 0.5px; }
 
-        /* TASK LIST UI */
         .task-list { display: flex; flex-direction: column; gap: 12px; }
         .task-box { display: flex; align-items: center; justify-content: space-between; background: #FFFFFF; padding: 16px 14px; border-radius: 20px; box-shadow: 0 4px 15px rgba(0,0,0,0.03); border: 1px solid rgba(0,0,0,0.02); transition: all 0.2s ease; cursor: pointer; }
         .task-box:active { transform: scale(0.97); background: #F9F9FB; }
@@ -61,7 +62,6 @@
         
         .task-reward { background: var(--bkash-pink); color: white; padding: 8px 12px; border-radius: 10px; font-size: 13px; font-weight: 800; white-space: nowrap; flex-shrink: 0; display: inline-flex; justify-content: center; align-items: center; box-shadow: 0 4px 10px rgba(226, 19, 110, 0.2); }
 
-        /* PREMIUM MONETAG AD TASK CARD DESIGN */
         .ad-task-box {
             background: linear-gradient(135deg, #FFF0F5 0%, #FFE4E1 100%) !important;
             border: 2px dashed rgba(226, 19, 110, 0.3) !important;
@@ -78,7 +78,6 @@
         .nav-item.active { color: var(--bkash-pink); }
         .nav-item.active .nav-icon-box { background: #FFF0F5; color: var(--bkash-pink); transform: translateY(-2px); }
 
-        /* BOTTOM SHEET */
         .bottom-sheet-overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.4); backdrop-filter: blur(3px); z-index: 100; display: none; align-items: flex-end; opacity: 0; transition: opacity 0.3s ease; }
         .bottom-sheet-overlay.active { display: flex; opacity: 1; }
         .bottom-sheet { background: #fff; width: 100%; border-radius: 30px 30px 0 0; padding: 24px; padding-bottom: max(24px, env(safe-area-inset-bottom)); transform: translateY(100%); transition: transform 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275); box-shadow: 0 -10px 40px rgba(0,0,0,0.1); max-height: 90vh; overflow-y: auto; }
@@ -119,7 +118,6 @@
 
     <div class="main-container">
         
-        <!-- সুন্দর নোটিশ কার্ডটি এখানে ফিরিয়ে আনা হয়েছে -->
         <div class="notice-card">
             <div class="notice-icon"><i class="fa-solid fa-bolt"></i></div>
             <div class="notice-content">
@@ -130,10 +128,8 @@
 
         <div class="section-title">টাস্ক কমপ্লিট করুন</div>
         
-        <!-- টাস্ক লিস্টের কন্টেইনার -->
         <div class="task-list">
             
-            <!-- স্পেশাল অ্যাড টাস্কটি এখানে লিস্টের অংশ হিসেবে বসানো হয়েছে -->
             <div class="task-box ad-task-box" id="monetagAdBox" onclick="triggerMonetagAd()">
                 <div class="task-icon-wrapper" style="background: var(--bkash-pink); color: white;">
                     <i class="fa-solid fa-circle-play"></i>
@@ -151,7 +147,6 @@
                 </div>
             </div>
 
-            <!-- ডাইনামিক টাস্কগুলো এই ডিভের ভেতর লোড হবে -->
             <div id="taskListContainer" style="display: flex; flex-direction: column; gap: 12px;">
                 <div style="text-align:center; color:var(--text-muted); font-size:13px; padding: 40px 0; font-weight: 600;">
                     <i class="fa-solid fa-spinner fa-spin" style="font-size: 26px; color: var(--bkash-pink); margin-bottom: 12px;"></i><br>
@@ -211,7 +206,8 @@
             </div>
         </div>
     </div>
-<script>
+    
+    <script>
         const tg = window.Telegram.WebApp;
         tg.ready();
         tg.expand();
@@ -326,7 +322,6 @@
             startTaskListener();
         }
 
-        // --- MONETAG REWARDED AD LOGIC (ANTI-CHEAT) ---
         let adRewardAmount = 0.10;
         let isAdRunning = false;
         let adStartTime = 0;
@@ -354,7 +349,6 @@
         async function triggerMonetagAd() {
             if (isAdRunning) return;
             
-            // Monetag SDK Load Check
             if (typeof show_11041333 !== "function") {
                 safeHapticFeedback('error');
                 Swal.fire({
@@ -377,10 +371,8 @@
             descText.innerText = "অ্যাড চলমান... সম্পূর্ণ সময় দেখুন।";
 
             try {
-                // Trigger the SDK Reward/Interstitial Pop-up directly in TG Webapp
                 await show_11041333();
                 
-                // Track visual time check (Minimum 14 seconds to avoid immediate skips)
                 const elapsedSeconds = (Date.now() - adStartTime) / 1000;
                 
                 if (elapsedSeconds >= 14) {
@@ -428,7 +420,7 @@
                 Swal.fire("এরর", "ডাটাবেজ আপডেট করা যায়নি।", "error");
             }
         }
-// --- TASK ENGINE ---
+
         function startTaskListener() {
             const container = document.getElementById('taskListContainer');
 
@@ -502,7 +494,6 @@
             });
         }
 
-        // --- PREP TASK ---
         function prepSecureTask(id, creatorId, link, reward, platformType, taskTitle, iconClass, customLogoUrl, customDesc) {
             activeTaskContext = { id, creatorId, link, reward, platformType };
             
@@ -533,7 +524,6 @@
             safeHapticFeedback('light');
         }
 
-        // --- TIMER FLOW ---
         function startTimerFlow(btnElement) {
             if(!activeTaskContext) return;
             safeOpenLink(activeTaskContext.link);
@@ -553,7 +543,7 @@
                 }
             }, 1000);
         }
-// --- TELEGRAM VERIFICATION ---
+
         async function initiateSecureTask() {
             if(!activeTaskContext || isTaskProcessing) return;
             const ctx = activeTaskContext;
@@ -604,7 +594,6 @@
             }
         }
 
-        // --- MANUAL UPLOAD SYSTEM ---
         function resetImagePreview() {
             selectedProofFile = null;
             document.getElementById('imagePreviewBox').innerHTML = `<div id="uploadPlaceholder"><i class="fa-solid fa-cloud-arrow-up" style="margin-right: 8px; font-size: 20px;"></i> ছবি সিলেক্ট করুন</div>`;
