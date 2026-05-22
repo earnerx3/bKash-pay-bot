@@ -92,7 +92,7 @@
 
         .section-title { font-size: 13px; font-weight: 800; color: #6e6e73; text-transform: uppercase; margin: 10px 4px 12px 4px; letter-spacing: 0.5px; }
 
-        /* FIX: TASK LIST UI (No Stretching) */
+        /* TASK LIST UI */
         .task-list { display: flex; flex-direction: column; gap: 12px; }
         .task-box {
             display: flex; align-items: center; justify-content: space-between;
@@ -111,7 +111,6 @@
         .task-title { font-size: 15px; font-weight: 800; color: var(--text-main); margin-bottom: 3px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
         .task-desc-short { font-size: 12px; font-weight: 600; color: var(--text-muted); }
         
-        /* FIX: Reward Button Proportion */
         .task-reward { 
             background: var(--bkash-pink); color: white; 
             padding: 8px 12px; border-radius: 10px; font-size: 13px; font-weight: 800; 
@@ -253,8 +252,8 @@
         // --- Global Variables ---
         let currentUser = null;
         let tgUser = tg.initDataUnsafe.user;
-        let activeTaskContext = null; // Security context for current task
-        let isTaskProcessing = false; // Anti-spam lock
+        let activeTaskContext = null; 
+        let isTaskProcessing = false; 
 
         // --- Utility Functions ---
         function formatMoney(num) { return parseFloat(num || 0).toFixed(2); }
@@ -267,7 +266,6 @@
         // --- 1. SUPER FAST CACHING SYSTEM ---
         function applyLocalCache() {
             try {
-                // Profile & Balance Cache
                 const cachedName = localStorage.getItem('cp_name');
                 const cachedBal = localStorage.getItem('cp_bal');
                 const cachedAvatar = localStorage.getItem('cp_avatar');
@@ -282,14 +280,12 @@
                     avatarDiv.style.background = "transparent";
                 }
 
-                // Load tasks immediately from cache to avoid white screen
                 if(cachedTasksHTML) {
                     document.getElementById('taskListContainer').innerHTML = cachedTasksHTML;
                 }
-            } catch(e) { console.error("Cache Error", e); }
+            } catch(e) { console.warn("Cache Warning:", e); }
         }
 
-        // Apply cache immediately on script load
         applyLocalCache();
 
         // --- 2. FIREBASE SYNC (SILENT UPDATE) ---
@@ -299,7 +295,6 @@
                 return;
             }
 
-            // Sync User Profile
             const userId = String(tgUser.id);
             const userRef = db.collection('users').doc(userId);
 
@@ -307,12 +302,12 @@
                 if(doc.exists) {
                     currentUser = doc.data();
                     
-                    // Update Cache
-                    localStorage.setItem('cp_name', currentUser.first_name || 'User');
-                    localStorage.setItem('cp_bal', formatMoney(currentUser.earningBalance || 0));
-                    if(tgUser.photo_url) localStorage.setItem('cp_avatar', tgUser.photo_url);
+                    try {
+                        localStorage.setItem('cp_name', currentUser.first_name || 'User');
+                        localStorage.setItem('cp_bal', formatMoney(currentUser.earningBalance || 0));
+                        if(tgUser.photo_url) localStorage.setItem('cp_avatar', tgUser.photo_url);
+                    } catch(e) {}
 
-                    // Update UI silently
                     document.getElementById('userNameDisplay').innerText = currentUser.first_name || 'User';
                     document.getElementById('headerBalance').innerText = formatMoney(currentUser.earningBalance || 0);
                     
@@ -331,7 +326,7 @@
                         earningBalance: 0.00,
                         depositBalance: 0.00,
                         totalCompletedTasks: 0,
-                        completedTasks: [], // Important for anti-cheat
+                        completedTasks: [], 
                         createdAt: firebase.firestore.FieldValue.serverTimestamp()
                     };
                     userRef.set(newUser);
@@ -341,13 +336,12 @@
             startTaskListener();
         }
 
-        // --- 3. SMART TASK ENGINE (UPDATED WITH BUG FIXES) ---
+        // --- 3. SMART TASK ENGINE (ULTIMATE FAIL-SAFE) ---
         function startTaskListener() {
             const container = document.getElementById('taskListContainer');
 
             db.collection('campaigns').where('status', '==', 'active').onSnapshot(snapshot => {
                 
-                // ১. যদি ডাটাবেজে কোনো অ্যাক্টিভ টাস্ক না থাকে
                 if(snapshot.empty) {
                     const emptyHTML = `
                         <div style="text-align:center; padding: 40px 20px; background: #fff; border-radius: 20px; border: 1px solid rgba(0,0,0,0.03);">
@@ -359,7 +353,7 @@
                         </div>
                     `;
                     container.innerHTML = emptyHTML;
-                    localStorage.setItem('cp_tasks_html', emptyHTML);
+                    try { localStorage.setItem('cp_tasks_html', emptyHTML); } catch(e) {}
                     return;
                 }
 
@@ -373,16 +367,20 @@
                         
                         const currentUserId = (tgUser && tgUser.id) ? String(tgUser.id) : '';
                         
-                        // সিকিউরিটি ফিল্টার: নিজে তৈরি করা বা কমপ্লিট করা টাস্ক স্কিপ করা
+                        // [সিকিউরিটি ও ক্র্যাশ ফিক্স] Data Type Verification
+                        let isCompleted = false;
+                        if (currentUser && currentUser.completedTasks && Array.isArray(currentUser.completedTasks)) {
+                            isCompleted = currentUser.completedTasks.includes(taskId);
+                        }
+                        
                         if(task.creatorId && task.creatorId === currentUserId) return;
-                        if(currentUser && currentUser.completedTasks && currentUser.completedTasks.includes(taskId)) return;
+                        if(isCompleted) return;
                         if(task.completedMembers >= task.targetMembers) return;
 
                         taskRendered = true; 
                         const rewardAmt = task.rewardPerUser || 0;
                         const remaining = task.targetMembers - task.completedMembers;
                         
-                        // [বাগ ফিক্স] ডাটাবেজ থেকে আসা লিংকটি স্ট্রিং (String) কি না তা নিশ্চিত করা
                         const rawLink = task.link ? String(task.link) : '';
                         const safeLink = rawLink.replace(/'/g, "\\'"); 
 
@@ -402,30 +400,37 @@
                         `;
                     });
 
-                    // যদি ইউজারের জন্য কোনো টাস্ক এভেইলেবল না থাকে
                     if (!taskRendered) {
                         generatedHTML = '<div style="text-align:center; color:var(--text-muted); font-size:13px; padding: 30px 0; font-weight: 600;">আপনার জন্য বর্তমানে নতুন কোনো টাস্ক নেই</div>';
                     }
 
-                    // সরাসরি DOM আপডেট করা, যাতে স্পিনারটি সরে যায়
                     container.innerHTML = generatedHTML;
-                    localStorage.setItem('cp_tasks_html', generatedHTML);
+                    
+                    // [ফিক্স] LocalStorage Error Handling
+                    try {
+                        localStorage.setItem('cp_tasks_html', generatedHTML);
+                    } catch(lsError) {
+                        console.warn("Local storage disabled by Telegram", lsError);
+                    }
 
                 } catch(error) {
                     console.error("Task Engine Error:", error);
-                    // এরর আসলে স্পিনার সরিয়ে এরর মেসেজ দেখাবে
-                    container.innerHTML = `<div style="text-align:center; color:red; font-size:13px; padding: 30px 0; font-weight: 600;">টাস্ক লোড করতে ইন্টারনাল সমস্যা হয়েছে।</div>`;
+                    // [ফিক্স] আসল এররটি স্ক্রিনে প্রিন্ট করা
+                    container.innerHTML = `
+                        <div style="text-align:center; color:red; font-size:13px; padding: 30px 20px; font-weight: 600; background:#FFF0F5; border-radius:12px;">
+                            ইন্টারনাল সমস্যা হয়েছে!<br>
+                            <span style="font-size:11px; color:#555; word-break: break-all; margin-top:8px; display:inline-block;">Error: ${error.message}</span>
+                        </div>
+                    `;
                 }
             }, error => {
-                // [বাগ ফিক্স] ফায়ারবেস থেকে কোনো এরর আসলে সেটা হ্যান্ডেল করা
                 console.error("Firebase Snapshot Error:", error);
-                container.innerHTML = `<div style="text-align:center; color:red; font-size:13px; padding: 30px 0; font-weight: 600;">ডাটাবেজ কানেকশনে সমস্যা! আপনার ইন্টারনেট কানেকশন চেক করুন।</div>`;
+                container.innerHTML = `<div style="text-align:center; color:red; font-size:13px; padding: 30px 0; font-weight: 600;">ডাটাবেজ কানেকশনে সমস্যা!</div>`;
             });
         }
 
         // --- 4. SECURE TASK EXECUTION ALGORITHM ---
         function prepSecureTask(id, link, reward) {
-            // Setup context
             activeTaskContext = { id, link, reward, hash: Date.now().toString(36) };
             
             document.getElementById('ts-reward').innerText = `+ ${formatMoney(reward)} ৳`;
@@ -433,12 +438,11 @@
             safeHapticFeedback('light');
         }
 
-        // This function is structured to prevent basic bot scripts from spamming
         async function initiateSecureTask() {
             if(!activeTaskContext || isTaskProcessing) return;
             
             const ctx = activeTaskContext;
-            isTaskProcessing = true; // Lock mechanism (Anti-Spam)
+            isTaskProcessing = true; 
             
             safeOpenLink(ctx.link);
             closeSheet('taskSheet');
@@ -450,20 +454,17 @@
                 didOpen: () => { Swal.showLoading(); }
             });
 
-            // Simulate API Network Delay (Helps mask client-side logic logic)
             await new Promise(resolve => setTimeout(resolve, 1500));
             
             try {
-                // Strict Firebase Transaction/Batch Rules applied here
                 const batch = db.batch();
                 const userRef = db.collection('users').doc(currentUser.userId);
                 const campRef = db.collection('campaigns').doc(ctx.id);
 
-                // Use FieldValue.arrayUnion to STRICTLY prevent duplicate entries
                 batch.update(userRef, {
                     earningBalance: firebase.firestore.FieldValue.increment(Number(ctx.reward)),
                     completedTasks: firebase.firestore.FieldValue.arrayUnion(ctx.id),
-                    totalCompletedTasks: firebase.firestore.FieldValue.increment(1) // Admin Tracking Point
+                    totalCompletedTasks: firebase.firestore.FieldValue.increment(1) 
                 });
 
                 batch.update(campRef, {
@@ -494,7 +495,7 @@
                 });
             } finally {
                 activeTaskContext = null;
-                isTaskProcessing = false; // Release lock
+                isTaskProcessing = false; 
             }
         }
 
