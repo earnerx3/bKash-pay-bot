@@ -40,22 +40,6 @@
 
         .main-container { margin-top: -45px; padding: 0 16px; position: relative; z-index: 10; }
 
-        /* --- MONETAG AD BOX --- */
-        .ad-card {
-            background: linear-gradient(135deg, #1C1C1E, #2C2C2E); border-radius: 20px; padding: 18px; margin-bottom: 20px;
-            box-shadow: 0 8px 25px rgba(0, 0, 0, 0.2); display: flex; align-items: center; justify-content: space-between;
-            border: 1px solid rgba(255,255,255,0.1); position: relative; overflow: hidden;
-        }
-        .ad-card::before { content: ''; position: absolute; top: -50%; left: -50%; width: 200%; height: 200%; background: radial-gradient(circle, rgba(226, 19, 110, 0.2) 0%, transparent 60%); animation: rotate 10s linear infinite; }
-        @keyframes rotate { 100% { transform: rotate(360deg); } }
-        .ad-content { position: relative; z-index: 2; color: white; }
-        .ad-title { font-size: 15px; font-weight: 900; margin-bottom: 4px; display: flex; align-items: center; gap: 6px; }
-        .ad-desc { font-size: 11px; color: #E5E5EA; font-weight: 600; opacity: 0.9;}
-        .ad-btn { background: var(--bkash-pink); color: white; padding: 10px 16px; border-radius: 12px; font-size: 13px; font-weight: 800; border: none; cursor: pointer; box-shadow: 0 4px 15px rgba(226, 19, 110, 0.4); position: relative; z-index: 2; transition: 0.2s; white-space: nowrap;}
-        .ad-btn:active { transform: scale(0.95); }
-        .friday-badge { background: #FF9500; color: white; font-size: 9px; padding: 2px 6px; border-radius: 4px; text-transform: uppercase; font-weight: 900; margin-left: 6px; animation: pulse 1.5s infinite; }
-        @keyframes pulse { 0% { transform: scale(1); } 50% { transform: scale(1.1); } 100% { transform: scale(1); } }
-
         .section-title { font-size: 13px; font-weight: 800; color: #6e6e73; text-transform: uppercase; margin: 10px 4px 12px 4px; letter-spacing: 0.5px; }
 
         /* TASK LIST UI */
@@ -66,11 +50,38 @@
         .task-icon-wrapper { width: 48px; height: 48px; border-radius: 14px; display: flex; align-items: center; justify-content: center; font-size: 22px; flex-shrink: 0; background: #FFF0F5; color: var(--bkash-pink); overflow: hidden; }
         
         .task-info { flex-grow: 1; margin: 0 14px; overflow: hidden; display: flex; flex-direction: column; justify-content: center; min-width: 0; }
-        /* Title Ellipsis - বড় টাইটেল হলে ডট ডট হবে */
         .task-title { font-size: 15px; font-weight: 800; color: var(--text-main); margin-bottom: 3px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; width: 100%; }
         .task-desc-short { font-size: 12px; font-weight: 600; color: var(--text-muted); }
         
         .task-reward { background: var(--bkash-pink); color: white; padding: 8px 12px; border-radius: 10px; font-size: 13px; font-weight: 800; white-space: nowrap; flex-shrink: 0; display: inline-flex; justify-content: center; align-items: center; box-shadow: 0 4px 10px rgba(226, 19, 110, 0.2); }
+
+        /* PREMIUM MONETAG AD TASK CARD DESIGN */
+        .ad-task-box {
+            background: linear-gradient(135deg, #FFF0F5 0%, #FFE4E1 100%) !important;
+            border: 2px dashed rgba(226, 19, 110, 0.3) !important;
+            box-shadow: 0 4px 15px rgba(226, 19, 110, 0.08) !important;
+            animation: border-pulse 2s infinite alternate;
+        }
+        @keyframes border-pulse {
+            0% { border-color: rgba(226, 19, 110, 0.3); }
+            100% { border-color: rgba(226, 19, 110, 0.8); }
+        }
+        .ad-task-badge {
+            background: #FF9500;
+            color: white;
+            font-size: 9px;
+            font-weight: 900;
+            padding: 2px 6px;
+            border-radius: 4px;
+            text-transform: uppercase;
+            margin-left: 6px;
+            animation: badge-pulse 1.5s infinite;
+        }
+        @keyframes badge-pulse {
+            0% { transform: scale(1); }
+            50% { transform: scale(1.08); }
+            100% { transform: scale(1); }
+        }
 
         .bottom-nav { position: fixed; bottom: 0; left: 0; width: 100%; background: var(--glass-bg); backdrop-filter: blur(10px); -webkit-backdrop-filter: blur(10px); border-top: 1px solid rgba(0,0,0,0.05); display: flex; justify-content: space-around; padding: 8px 10px 20px 10px; z-index: 50; box-shadow: 0 -5px 20px rgba(0,0,0,0.03); }
         .nav-item { display: flex; flex-direction: column; align-items: center; gap: 3px; color: var(--text-muted); font-size: 10px; font-weight: 700; cursor: pointer; flex: 1; text-decoration: none;}
@@ -119,18 +130,26 @@
 
     <div class="main-container">
         
-        <div class="ad-card" id="monetagAdBox">
-            <div class="ad-content">
-                <div class="ad-title">
-                    <i class="fa-solid fa-play" style="color: #00ff73;"></i> স্পেশাল অ্যাড বোনাস
-                    <span id="fridayBadge" class="friday-badge" style="display:none;">Friday Special</span>
-                </div>
-                <div class="ad-desc">১৫ সেকেন্ড অ্যাড দেখুন এবং জিতুন <b style="color:#00ff73;" id="adRewardAmountText">০.১০</b> ৳</div>
+        <div class="section-title">টাস্ক কমপ্লিট করুন</div>
+        
+        <!-- PREMIUM MONETAG AD TASK -->
+        <div class="task-box ad-task-box" id="monetagAdBox" onclick="triggerMonetagAd()" style="margin-bottom: 12px;">
+            <div class="task-icon-wrapper" style="background: var(--bkash-pink); color: white;">
+                <i class="fa-solid fa-circle-play"></i>
             </div>
-            <button class="ad-btn" id="watchAdBtn" onclick="triggerMonetagAd()">অ্যাড দেখুন</button>
+            <div class="task-info">
+                <div class="task-title" style="color: var(--bkash-pink); font-weight: 900; display: flex; align-items: center; gap: 4px;">
+                    স্পেশাল অ্যাড বোনাস <span id="fridayBadge" class="ad-task-badge" style="display:none;">Friday</span>
+                </div>
+                <div class="task-desc-short" id="adDescText">১৫ সেকেন্ড অ্যাড দেখে রেওয়ার্ড ক্লেইম করুন</div>
+            </div>
+            <div>
+                <div class="task-reward" style="background: #00d26a; box-shadow: 0 4px 10px rgba(0, 210, 106, 0.2); font-size: 13px;">
+                    + <span id="adRewardAmountText">০.১০</span> ৳
+                </div>
+            </div>
         </div>
 
-        <div class="section-title">টাস্ক কমপ্লিট করুন</div>
         <div class="task-list" id="taskListContainer">
             <div style="text-align:center; color:var(--text-muted); font-size:13px; padding: 40px 0; font-weight: 600;">
                 <i class="fa-solid fa-spinner fa-spin" style="font-size: 26px; color: var(--bkash-pink); margin-bottom: 12px;"></i><br>
@@ -208,7 +227,6 @@
         firebase.initializeApp(firebaseConfig);
         const db = firebase.firestore();
 
-        // 🟢 NEW DUMMY BOT TOKEN (Security Verified)
         const DUMMY_BOT_TOKEN = "8867909422:AAEasrJluialvP0y8ORT07EvLRqcZWT2UyE";
         const IMGBB_API_KEY = "f2eb2797e033a6c70d376abe536b8681";
 
@@ -218,7 +236,6 @@
         let isTaskProcessing = false; 
         let selectedProofFile = null;
 
-        // --- Utility Functions ---
         function formatMoney(num) { return parseFloat(num || 0).toFixed(2); }
         function safeOpenLink(url) { tg.openLink(url); }
         function safeHapticFeedback(type) { if (tg.HapticFeedback) { type === 'success' ? tg.HapticFeedback.notificationOccurred('success') : tg.HapticFeedback.impactOccurred('light'); } }
@@ -241,7 +258,6 @@
             return match ? match[1] : null;
         }
 
-        // --- FAST CACHING ---
         function applyLocalCache() {
             try {
                 const cachedName = localStorage.getItem('cp_name');
@@ -307,63 +323,90 @@
             startTaskListener();
         }
 
-        // --- MONETAG REWARDED AD LOGIC (ANTI-HACK) ---
+        // --- MONETAG REWARDED AD LOGIC (ANTI-CHEAT) ---
         let adRewardAmount = 0.10;
         let isAdRunning = false;
         let adStartTime = 0;
 
+        function getBengaliNumber(num) {
+            const bengaliDigits = {'0': '০', '1': '১', '2': '২', '3': '৩', '4': '৪', '5': '৫', '6': '৬', '7': '৭', '8': '৮', '9': '৯'};
+            return num.toString().split('').map(digit => bengaliDigits[digit] || digit).join('');
+        }
+
         function checkFridayAdBonus() {
-            // Bangladesh Time check for Friday (Day 5)
             const bdTime = new Date().toLocaleString("en-US", {timeZone: "Asia/Dhaka"});
             const day = new Date(bdTime).getDay(); 
             
             if (day === 5) {
                 adRewardAmount = 0.15;
                 document.getElementById('fridayBadge').style.display = 'inline-block';
+                document.getElementById('adRewardAmountText').innerText = getBengaliNumber("0.15");
             } else {
                 adRewardAmount = 0.10;
                 document.getElementById('fridayBadge').style.display = 'none';
+                document.getElementById('adRewardAmountText').innerText = getBengaliNumber("0.10");
             }
-            document.getElementById('adRewardAmountText').innerText = "০." + (adRewardAmount * 100);
         }
 
-        function triggerMonetagAd() {
-            if(isAdRunning) return;
+        async function triggerMonetagAd() {
+            if (isAdRunning) return;
             
-            // Your Monetag Direct Link here:
-            safeOpenLink("https://www.monetag.com/direct-link-example"); 
-            
+            // Monetag SDK Load Check
+            if (typeof show_11041333 !== "function") {
+                safeHapticFeedback('error');
+                Swal.fire({
+                    title: "অ্যাড লোড হচ্ছে...",
+                    text: "দয়া করে ৫-১০ সেকেন্ড অপেক্ষা করে পুনরায় চেষ্টা করুন।",
+                    icon: "info",
+                    confirmButtonColor: "#E2136E"
+                });
+                return;
+            }
+
             isAdRunning = true;
             adStartTime = Date.now();
             
-            const btn = document.getElementById('watchAdBtn');
-            btn.innerText = "অ্যাড চলছে...";
-            btn.style.opacity = "0.7";
-        }
+            const adBox = document.getElementById('monetagAdBox');
+            adBox.style.opacity = "0.6";
+            adBox.style.pointerEvents = "none";
+            
+            const descText = document.getElementById('adDescText');
+            descText.innerText = "অ্যাড চলমান... সম্পূর্ণ সময় দেখুন।";
 
-        // Visibility API: Detect if they skipped the ad early
-        document.addEventListener("visibilitychange", () => {
-            if (document.visibilityState === "visible" && isAdRunning) {
-                isAdRunning = false;
-                const timeSpent = Date.now() - adStartTime;
-                const btn = document.getElementById('watchAdBtn');
-                btn.innerText = "অ্যাড দেখুন";
-                btn.style.opacity = "1";
-
-                // If user returns before 15 seconds (15000ms), ALERT them!
-                if (timeSpent < 15000) {
+            try {
+                // Trigger the SDK Reward/Interstitial Pop-up directly in TG Webapp
+                await show_11041333();
+                
+                // Track visual time check (Minimum 14 seconds to avoid immediate skips)
+                const elapsedSeconds = (Date.now() - adStartTime) / 1000;
+                
+                if (elapsedSeconds >= 14) {
+                    await grantAdReward();
+                } else {
                     safeHapticFeedback('error');
                     Swal.fire({
                         title: "চিটিং ধরা পড়েছে! 🚫",
-                        text: "আপনি ১৫ সেকেন্ড শেষ হওয়ার আগেই অ্যাড কেটে দিয়েছেন। কোনো রেওয়ার্ড পাবেন না!",
+                        text: "আপনি ১৫ সেকেন্ড শেষ হওয়ার পূর্বেই অ্যাডটি কেটে দিয়েছেন।",
                         icon: "error",
                         confirmButtonColor: "#E2136E"
                     });
-                } else {
-                    grantAdReward();
                 }
+            } catch (err) {
+                console.error("Ad SDK error:", err);
+                safeHapticFeedback('error');
+                Swal.fire({
+                    title: "অ্যাড বাতিল হয়েছে",
+                    text: "বিজ্ঞাপনটি সঠিকভাবে সম্পূর্ণ করা হয়নি।",
+                    icon: "warning",
+                    confirmButtonColor: "#E2136E"
+                });
+            } finally {
+                isAdRunning = false;
+                adBox.style.opacity = "1";
+                adBox.style.pointerEvents = "auto";
+                descText.innerText = "১৫ সেকেন্ড অ্যাড দেখে রেওয়ার্ড ক্লেইম করুন";
             }
-        });
+        }
 
         async function grantAdReward() {
             try {
@@ -374,16 +417,16 @@
                 safeHapticFeedback('success');
                 Swal.fire({ 
                     title: "সফল হয়েছে!", 
-                    text: `অ্যাড দেখার জন্য +${adRewardAmount} ৳ যোগ হয়েছে।`, 
+                    text: `স্পেশাল অ্যাড দেখার জন্য +${adRewardAmount} ৳ যোগ হয়েছে।`, 
                     icon: "success", 
-                    confirmButtonColor: "#00ff73" 
+                    confirmButtonColor: "#00d26a" 
                 });
             } catch(e) {
                 Swal.fire("এরর", "ডাটাবেজ আপডেট করা যায়নি।", "error");
             }
         }
 
-        // --- TASK ENGINE (Custom Logo, Ellipsis Title) ---
+        // --- TASK ENGINE ---
         function startTaskListener() {
             const container = document.getElementById('taskListContainer');
 
@@ -419,20 +462,17 @@
                     const rawLink = task.link ? String(task.link) : '';
                     const safeLink = rawLink.replace(/'/g, "\\'"); 
                     
-                    // Fallback icons
                     let iconClass = 'fa-telegram';
                     if(platformType === 'youtube') iconClass = 'fa-youtube';
                     else if(platformType === 'facebook') iconClass = 'fa-facebook';
                     else if(platformType === 'website') iconClass = 'fa-globe';
 
-                    // Premium Custom Values
                     let taskTitle = task.customTitle || (platformType === 'telegram' ? 'Join Channel / Group' : 'Visit Link');
                     let taskDesc = task.customDesc || (platformType === 'telegram' ? 'প্রদত্ত লিংকে প্রবেশ করে জয়েন করুন। বট অটোমেটিক চেক করবে।' : 'কাজ সম্পন্ন করে স্ক্রিনশট আপলোড করুন।');
                     let customLogoUrl = task.customLogo || '';
                     
                     let iconWrapperContent = customLogoUrl ? `<img src="${customLogoUrl}" style="width:100%; height:100%; object-fit:cover; border-radius:14px;">` : `<i class="fa-brands ${iconClass}"></i>`;
                     
-                    // Safe stringify for onClick
                     const safeTitle = taskTitle.replace(/'/g, "\\'").replace(/"/g, '&quot;');
                     const safeDesc = taskDesc.replace(/'/g, "\\'").replace(/"/g, '&quot;');
 
@@ -460,16 +500,14 @@
             });
         }
 
-        // --- PREP TASK (Popup with Custom Info) ---
+        // --- PREP TASK ---
         function prepSecureTask(id, creatorId, link, reward, platformType, taskTitle, iconClass, customLogoUrl, customDesc) {
             activeTaskContext = { id, creatorId, link, reward, platformType };
             
-            // Set Titles & Full Details
             document.getElementById('ts-title-text').innerText = taskTitle;
             document.getElementById('ts-desc-text').innerText = customDesc;
             document.getElementById('ts-reward').innerText = `+ ${formatMoney(reward)} ৳`;
             
-            // Set Custom Logo or Icon
             const iconBox = document.getElementById('ts-icon-box');
             if(customLogoUrl && customLogoUrl !== 'undefined' && customLogoUrl !== '') {
                 iconBox.innerHTML = `<img src="${customLogoUrl}" style="width:100%; height:100%; object-fit:cover; border-radius:16px;">`;
@@ -483,7 +521,6 @@
             actionBtn.innerText = "কাজ শুরু করুন";
             actionBtn.disabled = false;
             
-            // Override click for Custom Timer Flow
             actionBtn.onclick = function() { startTimerFlow(actionBtn); };
 
             document.getElementById('ts-default-view').style.display = 'block';
@@ -494,7 +531,7 @@
             safeHapticFeedback('light');
         }
 
-        // --- CUSTOM TIMER FLOW ---
+        // --- TIMER FLOW ---
         function startTimerFlow(btnElement) {
             if(!activeTaskContext) return;
             safeOpenLink(activeTaskContext.link);
@@ -515,7 +552,7 @@
             }, 1000);
         }
 
-        // --- VERIFY VIA DUMMY BOT ---
+        // --- TELEGRAM VERIFICATION ---
         async function initiateSecureTask() {
             if(!activeTaskContext || isTaskProcessing) return;
             const ctx = activeTaskContext;
@@ -527,7 +564,6 @@
 
                 const chatUsername = extractTelegramUsername(ctx.link);
                 try {
-                    // 🔒 USING SECURE DUMMY BOT
                     const res = await fetch(`https://api.telegram.org/bot${DUMMY_BOT_TOKEN}/getChatMember?chat_id=@${chatUsername}&user_id=${tgUser.id}`);
                     const data = await res.json();
 
