@@ -570,70 +570,93 @@
             }
         }
 
-        // --- LOAD MY CAMPAIGNS & RENDER UI ---
+        // --- LOAD MY CAMPAIGNS (No Firebase Indexing Required) ---
         function loadMyCampaigns(userId) {
-            db.collection('campaigns').where('creatorId', '==', userId).where('status', 'in', ['active', 'completed']).orderBy('createdAt', 'desc').onSnapshot(snapshot => {
+            db.collection('campaigns').where('creatorId', '==', userId).onSnapshot(snapshot => {
                 const container = document.getElementById('myCampaignHistoryList');
-                let htmlCache = '';
                 
                 if(snapshot.empty) {
-                    htmlCache = `<div class="glass-card" style="text-align: center; color: var(--text-muted); font-size: 13px; padding: 30px 0;"><i class="fa-solid fa-folder-open" style="font-size: 32px; margin-bottom: 10px; opacity: 0.3;"></i><br>কোনো ক্যাম্পেইন পাওয়া যায়নি</div>`;
-                } else {
-                    snapshot.forEach(doc => {
-                        const camp = doc.data();
-                        
-                        // Auto Update Status to completed if target reached
-                        if(camp.completedMembers >= camp.targetMembers && camp.status !== 'completed') {
-                            db.collection('campaigns').doc(camp.id).update({status: 'completed'});
-                            camp.status = 'completed';
-                        }
+                    container.innerHTML = `<div class="glass-card" style="text-align: center; color: var(--text-muted); font-size: 13px; padding: 30px 0;"><i class="fa-solid fa-folder-open" style="font-size: 32px; margin-bottom: 10px; opacity: 0.3;"></i><br>কোনো ক্যাম্পেইন পাওয়া যায়নি</div>`;
+                    return;
+                }
 
-                        const progress = Math.min(Math.round((camp.completedMembers / camp.targetMembers) * 100), 100);
-                        const isDone = camp.status === 'completed';
-                        
-                        let icon = 'fa-link'; let color = 'var(--text-muted)'; let pName = 'Website';
-                        if(camp.platformType === 'telegram') { icon = 'fa-telegram'; color = 'var(--tg-blue)'; pName = 'Telegram'; }
-                        else if(camp.platformType === 'youtube') { icon = 'fa-youtube'; color = '#FF0000'; pName = 'YouTube'; }
-                        else if(camp.platformType === 'facebook') { icon = 'fa-facebook'; color = '#1877F2'; pName = 'Facebook'; }
-                        
-                        // Action Buttons based on Platform & Status
-                        let actionHtml = '';
-                        if(!isDone) {
-                            if(camp.platformType !== 'telegram' || (camp.platformType === 'telegram' && camp.link.includes('joinchat'))) {
-                                actionHtml += `<button class="btn btn-outline" style="padding:8px 12px; font-size:12px; border-radius:8px;" onclick="loadPendingProofs('${camp.id}', ${camp.rewardPerUser})"><i class="fa-solid fa-images" style="color:var(--tg-blue);"></i> প্রুফ চেক</button>`;
-                            } else {
-                                actionHtml += `<div style="font-size:11px; color:var(--success); font-weight:700;"><i class="fa-solid fa-robot"></i> অটো-ভেরিফাই রানিং...</div>`;
-                            }
-                            actionHtml += `<button class="btn btn-danger" style="padding:8px 12px; font-size:12px; width:auto; border-radius:8px;" onclick="deleteCampaign('${camp.id}', ${camp.targetMembers - camp.completedMembers}, ${camp.rewardPerUser})"><i class="fa-solid fa-trash-can"></i></button>`;
+                let campaignsArray = [];
+                snapshot.forEach(doc => {
+                    campaignsArray.push(doc.data());
+                });
+
+                // Sort by Timestamp in JavaScript
+                campaignsArray.sort((a, b) => {
+                    let timeA = a.createdAt ? a.createdAt.toMillis() : 0;
+                    let timeB = b.createdAt ? b.createdAt.toMillis() : 0;
+                    return timeB - timeA; // Descending (Newest First)
+                });
+
+                let htmlCache = '';
+                let validCampaignCount = 0;
+
+                campaignsArray.forEach(camp => {
+                    // ডিলিট করা ক্যাম্পেইনগুলো হাইড করার লজিক
+                    if(camp.status === 'deleted') return;
+                    
+                    validCampaignCount++;
+
+                    // Auto Update Status to completed if target reached
+                    if(camp.completedMembers >= camp.targetMembers && camp.status !== 'completed') {
+                        db.collection('campaigns').doc(camp.id).update({status: 'completed'});
+                        camp.status = 'completed';
+                    }
+
+                    const progress = Math.min(Math.round((camp.completedMembers / camp.targetMembers) * 100), 100);
+                    const isDone = camp.status === 'completed';
+                    
+                    let icon = 'fa-link'; let color = 'var(--text-muted)'; let pName = 'Website';
+                    if(camp.platformType === 'telegram') { icon = 'fa-telegram'; color = 'var(--tg-blue)'; pName = 'Telegram'; }
+                    else if(camp.platformType === 'youtube') { icon = 'fa-youtube'; color = '#FF0000'; pName = 'YouTube'; }
+                    else if(camp.platformType === 'facebook') { icon = 'fa-facebook'; color = '#1877F2'; pName = 'Facebook'; }
+                    
+                    // Action Buttons based on Platform & Status
+                    let actionHtml = '';
+                    if(!isDone) {
+                        if(camp.platformType !== 'telegram' || (camp.platformType === 'telegram' && camp.link.includes('joinchat'))) {
+                            actionHtml += `<button class="btn btn-outline" style="padding:8px 12px; font-size:12px; border-radius:8px;" onclick="loadPendingProofs('${camp.id}', ${camp.rewardPerUser})"><i class="fa-solid fa-images" style="color:var(--tg-blue);"></i> প্রুফ চেক</button>`;
                         } else {
-                            actionHtml += `<div style="width:100%; text-align:center; font-size:12px; color:var(--success); font-weight:800;"><i class="fa-solid fa-circle-check"></i> ক্যাম্পেইন সম্পন্ন হয়েছে</div>`;
+                            actionHtml += `<div style="font-size:11px; color:var(--success); font-weight:700;"><i class="fa-solid fa-robot"></i> অটো-ভেরিফাই রানিং...</div>`;
                         }
+                        actionHtml += `<button class="btn btn-danger" style="padding:8px 12px; font-size:12px; width:auto; border-radius:8px;" onclick="deleteCampaign('${camp.id}', ${camp.targetMembers - camp.completedMembers}, ${camp.rewardPerUser})"><i class="fa-solid fa-trash-can"></i></button>`;
+                    } else {
+                        actionHtml += `<div style="width:100%; text-align:center; font-size:12px; color:var(--success); font-weight:800;"><i class="fa-solid fa-circle-check"></i> ক্যাম্পেইন সম্পন্ন হয়েছে</div>`;
+                    }
 
-                        htmlCache += `
-                            <div class="history-item">
-                                <div style="display: flex; justify-content: space-between; align-items: flex-end;">
-                                    <div>
-                                        <div style="font-size: 14px; font-weight: 800; color: var(--text-main); margin-bottom: 4px;">
-                                            <i class="fa-brands ${icon}" style="color:${color}; margin-right:4px;"></i> ${pName} Campaign
-                                        </div>
-                                        <div style="font-size: 11px; color: var(--text-muted); font-weight: 600;">সম্পন্ন: ${camp.completedMembers}/${camp.targetMembers} জন</div>
+                    htmlCache += `
+                        <div class="history-item">
+                            <div style="display: flex; justify-content: space-between; align-items: flex-end;">
+                                <div>
+                                    <div style="font-size: 14px; font-weight: 800; color: var(--text-main); margin-bottom: 4px;">
+                                        <i class="fa-brands ${icon}" style="color:${color}; margin-right:4px;"></i> ${pName} Campaign
                                     </div>
-                                    <div style="text-align: right;">
-                                        <div style="font-size: 14px; font-weight: 900; color: ${isDone ? 'var(--success)' : 'var(--bkash-pink)'};">${progress}%</div>
-                                        <div style="font-size: 10px; color: var(--text-muted); margin-top: 2px; font-weight: 600;">Cost: ৳${formatMoney(camp.rewardPerUser * camp.targetMembers)}</div>
-                                    </div>
+                                    <div style="font-size: 11px; color: var(--text-muted); font-weight: 600;">সম্পন্ন: ${camp.completedMembers}/${camp.targetMembers} জন</div>
                                 </div>
-                                <div class="progress-bg">
-                                    <div class="progress-fill" style="width: ${progress}%; background: ${isDone ? 'var(--success)' : ''}"></div>
-                                </div>
-                                <div class="action-row">
-                                    ${actionHtml}
+                                <div style="text-align: right;">
+                                    <div style="font-size: 14px; font-weight: 900; color: ${isDone ? 'var(--success)' : 'var(--bkash-pink)'};">${progress}%</div>
+                                    <div style="font-size: 10px; color: var(--text-muted); margin-top: 2px; font-weight: 600;">Cost: ৳${formatMoney(camp.rewardPerUser * camp.targetMembers)}</div>
                                 </div>
                             </div>
-                        `;
-                    });
+                            <div class="progress-bg">
+                                <div class="progress-fill" style="width: ${progress}%; background: ${isDone ? 'var(--success)' : ''}"></div>
+                            </div>
+                            <div class="action-row">
+                                ${actionHtml}
+                            </div>
+                        </div>
+                    `;
+                });
+
+                if(validCampaignCount === 0) {
+                    container.innerHTML = `<div class="glass-card" style="text-align: center; color: var(--text-muted); font-size: 13px; padding: 30px 0;"><i class="fa-solid fa-folder-open" style="font-size: 32px; margin-bottom: 10px; opacity: 0.3;"></i><br>কোনো ক্যাম্পেইন পাওয়া যায়নি</div>`;
+                } else {
+                    container.innerHTML = htmlCache;
                 }
-                container.innerHTML = htmlCache;
             });
         }
 
