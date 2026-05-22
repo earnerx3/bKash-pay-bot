@@ -25,128 +25,501 @@
             --glass-bg: rgba(255, 255, 255, 0.95);
         }
 
-        * { margin: 0; padding: 0; box-sizing: border-box; font-family: -apple-system, BlinkMacSystemFont, "SF Pro Display", sans-serif; }
-        body { background-color: var(--tg-theme-bg); color: var(--text-main); padding-bottom: 90px; -webkit-tap-highlight-color: transparent; }
+        * { 
+            margin: 0; 
+            padding: 0; 
+            box-sizing: border-box; 
+            font-family: -apple-system, BlinkMacSystemFont, "SF Pro Display", sans-serif; 
+        }
+
+        body { 
+            background-color: var(--tg-theme-bg); 
+            color: var(--text-main); 
+            padding-bottom: 90px; 
+            -webkit-tap-highlight-color: transparent; 
+        }
 
         .bkash-header-bg {
             background: linear-gradient(180deg, var(--bkash-pink) 0%, var(--bkash-pink-dark) 100%);
             padding: 24px 20px 70px 20px; 
-            border-bottom-left-radius: 35px; border-bottom-right-radius: 35px;
-            color: white; box-shadow: 0 10px 25px rgba(226, 19, 110, 0.25); position: relative;
+            border-bottom-left-radius: 35px; 
+            border-bottom-right-radius: 35px;
+            color: white; 
+            box-shadow: 0 10px 25px rgba(226, 19, 110, 0.25); 
+            position: relative;
         }
 
-        .header-top { display: flex; justify-content: space-between; align-items: center; }
-        .profile-section { display: flex; align-items: center; gap: 12px; }
-        .profile-avatar {
-            width: 44px; height: 44px; background: rgba(255, 255, 255, 0.2);
-            border: 2px solid rgba(255, 255, 255, 0.5); border-radius: 50%;
-            display: flex; justify-content: center; align-items: center; font-size: 20px; color: white; backdrop-filter: blur(5px);
-            overflow: hidden;
+        .header-top { 
+            display: flex; 
+            justify-content: space-between; 
+            align-items: center; 
         }
-        .greeting { font-size: 11px; opacity: 0.9; font-weight: 600; text-transform: uppercase; letter-spacing: 0.5px;}
-        .user-name { font-size: 17px; font-weight: 800; letter-spacing: 0.2px; margin-top: 2px;}
 
-        .balance-badge {
-            background: rgba(255, 255, 255, 0.15); backdrop-filter: blur(10px); -webkit-backdrop-filter: blur(10px);
-            border: 1px solid rgba(255, 255, 255, 0.3); padding: 8px 14px; border-radius: 20px;
-            display: flex; align-items: center; gap: 8px; box-shadow: 0 4px 10px rgba(0,0,0,0.1);
+        .profile-section { 
+            display: flex; 
+            align-items: center; 
+            gap: 12px; 
         }
-        .balance-text { color: #ffffff; font-weight: 800; font-size: 15px; display: flex; align-items: center; gap: 4px; }
-        .dynamic-light {
-            width: 8px; height: 8px; background-color: #00ff73; border-radius: 50%; display: inline-block; 
-            box-shadow: 0 0 0 rgba(0, 255, 115, 0.7); animation: pulse-light 2s infinite cubic-bezier(0.66, 0, 0, 1); margin-left: 4px;
-        }
-        @keyframes pulse-light { to { box-shadow: 0 0 0 8px rgba(0, 255, 115, 0); } }
 
-        .main-container { margin-top: -45px; padding: 0 16px; position: relative; z-index: 10; }
+        .profile-avatar { 
+            width: 44px; 
+            height: 44px; 
+            background: rgba(255, 255, 255, 0.2); 
+            border: 2px solid rgba(255, 255, 255, 0.5); 
+            border-radius: 50%; 
+            display: flex; 
+            justify-content: center; 
+            align-items: center; 
+            font-size: 20px; 
+            color: white; 
+            backdrop-filter: blur(5px); 
+            overflow: hidden; 
+        }
+
+        .greeting { 
+            font-size: 11px; 
+            opacity: 0.9; 
+            font-weight: 600; 
+            text-transform: uppercase; 
+            letter-spacing: 0.5px;
+        }
+
+        .user-name { 
+            font-size: 17px; 
+            font-weight: 800; 
+            letter-spacing: 0.2px; 
+            margin-top: 2px;
+        }
+
+        .balance-badge { 
+            background: rgba(255, 255, 255, 0.15); 
+            backdrop-filter: blur(10px); 
+            -webkit-backdrop-filter: blur(10px); 
+            border: 1px solid rgba(255, 255, 255, 0.3); 
+            padding: 8px 14px; 
+            border-radius: 20px; 
+            display: flex; 
+            align-items: center; 
+            gap: 8px; 
+            box-shadow: 0 4px 10px rgba(0,0,0,0.1); 
+        }
+
+        .balance-text { 
+            color: #ffffff; 
+            font-weight: 800; 
+            font-size: 15px; 
+            display: flex; 
+            align-items: center; 
+            gap: 4px; 
+        }
+
+        .dynamic-light { 
+            width: 8px; 
+            height: 8px; 
+            background-color: #00ff73; 
+            border-radius: 50%; 
+            display: inline-block; 
+            box-shadow: 0 0 0 rgba(0, 255, 115, 0.7); 
+            animation: pulse-light 2s infinite cubic-bezier(0.66, 0, 0, 1); 
+            margin-left: 4px; 
+        }
+
+        @keyframes pulse-light { 
+            to { box-shadow: 0 0 0 8px rgba(0, 255, 115, 0); } 
+        }
+
+        .main-container { 
+            margin-top: -45px; 
+            padding: 0 16px; 
+            position: relative; 
+            z-index: 10; 
+        }
         
-        .glass-card {
-            background: #FFFFFF; border: 1px solid rgba(0,0,0,0.04); border-radius: 20px;
-            box-shadow: 0 8px 25px rgba(226, 19, 110, 0.08); padding: 20px; margin-bottom: 20px;
+        .glass-card { 
+            background: #FFFFFF; 
+            border: 1px solid rgba(0,0,0,0.04); 
+            border-radius: 20px; 
+            box-shadow: 0 8px 25px rgba(226, 19, 110, 0.08); 
+            padding: 20px; 
+            margin-bottom: 20px; 
         }
 
-        .section-title { font-size: 14px; font-weight: 800; color: #6e6e73; margin: 20px 4px 12px 4px; letter-spacing: 0.2px; }
+        .section-title { 
+            font-size: 14px; 
+            font-weight: 800; 
+            color: #6e6e73; 
+            margin: 20px 4px 12px 4px; 
+            letter-spacing: 0.2px; 
+        }
 
-        .input-group { margin-bottom: 18px; }
-        .input-label { font-size: 13px; font-weight: 700; margin-bottom: 8px; display: flex; justify-content: space-between; color: var(--text-main);}
+        .input-group { 
+            margin-bottom: 18px; 
+        }
+
+        .input-label { 
+            font-size: 13px; 
+            font-weight: 700; 
+            margin-bottom: 8px; 
+            display: flex; 
+            justify-content: space-between; 
+            color: var(--text-main);
+        }
+
         .input-field { 
-            width: 100%; padding: 14px 16px; background: #F9F9FB; border: 1px solid rgba(0,0,0,0.06); 
-            border-radius: 14px; font-size: 15px; font-weight: 600; outline: none; transition: 0.3s; 
+            width: 100%; 
+            padding: 14px 16px; 
+            background: #F9F9FB; 
+            border: 1px solid rgba(0,0,0,0.06); 
+            border-radius: 14px; 
+            font-size: 15px; 
+            font-weight: 600; 
+            outline: none; 
+            transition: 0.3s; 
         }
-        .input-field:focus { border-color: var(--bkash-pink); background: white; box-shadow: 0 0 0 3px rgba(226, 19, 110, 0.1); }
-        
-        .btn { width: 100%; padding: 14px; border: none; border-radius: 14px; font-size: 15px; font-weight: 800; cursor: pointer; transition: 0.2s; text-align: center; display: flex; justify-content: center; align-items: center; gap: 8px;}
-        .btn:disabled { opacity: 0.7; cursor: not-allowed; }
-        .btn-primary { background: var(--bkash-pink); color: white; box-shadow: 0 4px 15px rgba(226, 19, 110, 0.3);}
-        .btn-primary:active:not(:disabled) { transform: scale(0.98); box-shadow: none; }
-        .btn-success { background: linear-gradient(135deg, var(--success), #00b85c); color: white; box-shadow: 0 4px 12px rgba(0, 210, 106, 0.3);}
-        .btn-success:active:not(:disabled) { transform: scale(0.98); box-shadow: none; }
-        .btn-outline { background: white; color: var(--text-main); border: 2px solid #E5E5EA; }
-        .btn-danger { background: #FFF0F5; color: var(--danger); }
-        .btn-danger:active { background: #FFEBEB; transform: scale(0.95); }
-        
-        .grid-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
 
-        .step { display: none; animation: fadeIn 0.3s ease;}
-        .step.active { display: block; }
-        @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
+        .input-field:focus { 
+            border-color: var(--bkash-pink); 
+            background: white; 
+            box-shadow: 0 0 0 3px rgba(226, 19, 110, 0.1); 
+        }
+        
+        .btn { 
+            width: 100%; 
+            padding: 14px; 
+            border: none; 
+            border-radius: 14px; 
+            font-size: 15px; 
+            font-weight: 800; 
+            cursor: pointer; 
+            transition: 0.2s; 
+            text-align: center; 
+            display: flex; 
+            justify-content: center; 
+            align-items: center; 
+            gap: 8px;
+        }
 
-        .platform-badge { font-size: 12px; padding: 6px 12px; border-radius: 10px; font-weight: 800; display: inline-block; margin-bottom: 12px;}
+        .btn:disabled { 
+            opacity: 0.7; 
+            cursor: not-allowed; 
+        }
+
+        .btn-primary { 
+            background: var(--bkash-pink); 
+            color: white; 
+            box-shadow: 0 4px 15px rgba(226, 19, 110, 0.3);
+        }
+
+        .btn-primary:active:not(:disabled) { 
+            transform: scale(0.98); 
+            box-shadow: none; 
+        }
+
+        .btn-success { 
+            background: linear-gradient(135deg, var(--success), #00b85c); 
+            color: white; 
+            box-shadow: 0 4px 12px rgba(0, 210, 106, 0.3);
+        }
+
+        .btn-success:active:not(:disabled) { 
+            transform: scale(0.98); 
+            box-shadow: none; 
+        }
+
+        .btn-outline { 
+            background: white; 
+            color: var(--text-main); 
+            border: 2px solid #E5E5EA; 
+        }
+
+        .btn-danger { 
+            background: #FFF0F5; 
+            color: var(--danger); 
+        }
+
+        .btn-danger:active { 
+            background: #FFEBEB; 
+            transform: scale(0.95); 
+        }
+        
+        .grid-2 { 
+            display: grid; 
+            grid-template-columns: 1fr 1fr; 
+            gap: 12px; 
+        }
+
+        .step { 
+            display: none; 
+            animation: fadeIn 0.3s ease;
+        }
+
+        .step.active { 
+            display: block; 
+        }
+
+        @keyframes fadeIn { 
+            from { opacity: 0; transform: translateY(10px); } 
+            to { opacity: 1; transform: translateY(0); } 
+        }
+
+        .platform-badge { 
+            font-size: 12px; 
+            padding: 6px 12px; 
+            border-radius: 10px; 
+            font-weight: 800; 
+            display: inline-block; 
+            margin-bottom: 12px;
+        }
+
         .badge-tg { background: #E5F0FF; color: var(--tg-blue); }
         .badge-yt { background: #FFEBEB; color: #FF0000; }
         .badge-fb { background: #E5F0FF; color: #1877F2; }
         .badge-web { background: #F0F2F5; color: #606770; }
         
-        .history-item {
-            background: #FFFFFF; padding: 16px; border-radius: 20px; margin-bottom: 12px;
-            border: 1px solid rgba(0,0,0,0.04); box-shadow: 0 4px 15px rgba(0,0,0,0.02);
-            position: relative; overflow: hidden;
+        .history-item { 
+            background: #FFFFFF; 
+            padding: 16px; 
+            border-radius: 20px; 
+            margin-bottom: 12px; 
+            border: 1px solid rgba(0,0,0,0.04); 
+            box-shadow: 0 4px 15px rgba(0,0,0,0.02); 
+            position: relative; 
+            overflow: hidden; 
         }
-        .progress-bg { width: 100%; height: 8px; background: #F0F2F5; border-radius: 10px; margin-top: 12px; overflow: hidden; }
-        .progress-fill { height: 100%; background: linear-gradient(90deg, var(--bkash-pink), #ff5e9c); border-radius: 10px; transition: width 1s ease; }
 
-        .action-row { display: flex; justify-content: space-between; align-items: center; margin-top: 14px; padding-top: 10px; border-top: 1px dashed #E5E5EA;}
-        
-        .rules-board {
-            background: #FFF9E6; border: 1px dashed #FFE4B5; padding: 18px; border-radius: 20px; margin-bottom: 25px; box-shadow: inset 0 0 20px rgba(255, 249, 230, 0.5);
+        .progress-bg { 
+            width: 100%; 
+            height: 8px; 
+            background: #F0F2F5; 
+            border-radius: 10px; 
+            margin-top: 12px; 
+            overflow: hidden; 
         }
-        .rules-board h4 { color: #B8860B; margin-bottom: 12px; font-size: 15px; font-weight: 800; display: flex; align-items: center; gap: 8px; }
-        .rules-board ul { list-style: none; padding-left: 0; }
-        .rules-board li { font-size: 12px; color: #666; margin-bottom: 8px; display: flex; gap: 8px; align-items: flex-start; line-height: 1.5; font-weight: 600;}
-        .rules-board li::before { content: "✨"; font-size: 10px; margin-top: 2px; }
+
+        .progress-fill { 
+            height: 100%; 
+            background: linear-gradient(90deg, var(--bkash-pink), #ff5e9c); 
+            border-radius: 10px; 
+            transition: width 1s ease; 
+        }
+
+        .action-row { 
+            display: flex; 
+            justify-content: space-between; 
+            align-items: center; 
+            margin-top: 14px; 
+            padding-top: 10px; 
+            border-top: 1px dashed #E5E5EA;
+        }
+        
+        .rules-board { 
+            background: #FFF9E6; 
+            border: 1px dashed #FFE4B5; 
+            padding: 18px; 
+            border-radius: 20px; 
+            margin-bottom: 25px; 
+            box-shadow: inset 0 0 20px rgba(255, 249, 230, 0.5); 
+        }
+
+        .rules-board h4 { 
+            color: #B8860B; 
+            margin-bottom: 12px; 
+            font-size: 15px; 
+            font-weight: 800; 
+            display: flex; 
+            align-items: center; 
+            gap: 8px; 
+        }
+
+        .rules-board ul { 
+            list-style: none; 
+            padding-left: 0; 
+        }
+
+        .rules-board li { 
+            font-size: 12px; 
+            color: #666; 
+            margin-bottom: 8px; 
+            display: flex; 
+            gap: 8px; 
+            align-items: flex-start; 
+            line-height: 1.5; 
+            font-weight: 600;
+        }
+
+        .rules-board li::before { 
+            content: "✨"; 
+            font-size: 10px; 
+            margin-top: 2px; 
+        }
 
         .bottom-nav { 
-            position: fixed; bottom: 0; left: 0; width: 100%; 
-            background: var(--glass-bg); backdrop-filter: blur(10px); -webkit-backdrop-filter: blur(10px); 
-            border-top: 1px solid rgba(0,0,0,0.05); display: flex; justify-content: space-around; 
-            padding: 8px 10px 20px 10px; z-index: 50; box-shadow: 0 -5px 20px rgba(0,0,0,0.03);
+            position: fixed; 
+            bottom: 0; 
+            left: 0; 
+            width: 100%; 
+            background: var(--glass-bg); 
+            backdrop-filter: blur(10px); 
+            -webkit-backdrop-filter: blur(10px); 
+            border-top: 1px solid rgba(0,0,0,0.05); 
+            display: flex; 
+            justify-content: space-around; 
+            padding: 8px 10px 20px 10px; 
+            z-index: 50; 
+            box-shadow: 0 -5px 20px rgba(0,0,0,0.03); 
         }
-        .nav-item { display: flex; flex-direction: column; align-items: center; gap: 3px; color: var(--text-muted); font-size: 10px; font-weight: 700; cursor: pointer; flex: 1; text-decoration: none;}
-        .nav-icon-box { width: 36px; height: 26px; display: flex; justify-content: center; align-items: center; border-radius: 12px; font-size: 18px; transition: 0.3s; }
-        .nav-item.active { color: var(--bkash-pink); }
-        .nav-item.active .nav-icon-box { background: #FFF0F5; color: var(--bkash-pink); transform: translateY(-2px); }
+
+        .nav-item { 
+            display: flex; 
+            flex-direction: column; 
+            align-items: center; 
+            gap: 3px; 
+            color: var(--text-muted); 
+            font-size: 10px; 
+            font-weight: 700; 
+            cursor: pointer; 
+            flex: 1; 
+            text-decoration: none;
+        }
+
+        .nav-icon-box { 
+            width: 36px; 
+            height: 26px; 
+            display: flex; 
+            justify-content: center; 
+            align-items: center; 
+            border-radius: 12px; 
+            font-size: 18px; 
+            transition: 0.3s; 
+        }
+
+        .nav-item.active { 
+            color: var(--bkash-pink); 
+        }
+
+        .nav-item.active .nav-icon-box { 
+            background: #FFF0F5; 
+            color: var(--bkash-pink); 
+            transform: translateY(-2px); 
+        }
 
         /* BOTTOM SHEET FOR REVIEWS */
-        .bottom-sheet-overlay {
-            position: fixed; top: 0; left: 0; width: 100%; height: 100%;
-            background: rgba(0,0,0,0.4); backdrop-filter: blur(3px); z-index: 100; 
-            display: none; align-items: flex-end; opacity: 0; transition: opacity 0.3s ease;
+        .bottom-sheet-overlay { 
+            position: fixed; 
+            top: 0; 
+            left: 0; 
+            width: 100%; 
+            height: 100%; 
+            background: rgba(0,0,0,0.4); 
+            backdrop-filter: blur(3px); 
+            z-index: 100; 
+            display: none; 
+            align-items: flex-end; 
+            opacity: 0; 
+            transition: opacity 0.3s ease; 
         }
-        .bottom-sheet-overlay.active { display: flex; opacity: 1; }
-        .bottom-sheet {
-            background: #fff; width: 100%; border-radius: 30px 30px 0 0;
-            padding: 24px; padding-bottom: max(24px, env(safe-area-inset-bottom));
-            transform: translateY(100%); transition: transform 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
-            box-shadow: 0 -10px 40px rgba(0,0,0,0.1); max-height: 90vh; overflow-y: auto; position: relative;
+
+        .bottom-sheet-overlay.active { 
+            display: flex; 
+            opacity: 1; 
         }
-        .bottom-sheet-overlay.active .bottom-sheet { transform: translateY(0); }
-        .drag-handle { width: 36px; height: 4px; background: #E5E5EA; border-radius: 4px; margin: 0 auto 20px auto; }
-        .close-btn { position: absolute; top: 20px; right: 20px; width: 32px; height: 32px; background: #F0F2F5; border-radius: 50%; display: flex; align-items: center; justify-content: center; color: var(--text-muted); cursor: pointer;}
+
+        .bottom-sheet { 
+            background: #fff; 
+            width: 100%; 
+            border-radius: 30px 30px 0 0; 
+            padding: 24px; 
+            padding-bottom: max(24px, env(safe-area-inset-bottom)); 
+            transform: translateY(100%); 
+            transition: transform 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275); 
+            box-shadow: 0 -10px 40px rgba(0,0,0,0.1); 
+            max-height: 90vh; 
+            overflow-y: auto; 
+            position: relative; 
+        }
+
+        .bottom-sheet-overlay.active .bottom-sheet { 
+            transform: translateY(0); 
+        }
+
+        .drag-handle { 
+            width: 36px; 
+            height: 4px; 
+            background: #E5E5EA; 
+            border-radius: 4px; 
+            margin: 0 auto 20px auto; 
+        }
+
+        .close-btn { 
+            position: absolute; 
+            top: 20px; 
+            right: 20px; 
+            width: 32px; 
+            height: 32px; 
+            background: #F0F2F5; 
+            border-radius: 50%; 
+            display: flex; 
+            align-items: center; 
+            justify-content: center; 
+            color: var(--text-muted); 
+            cursor: pointer;
+        }
         
-        .proof-card { background: #F9F9FB; border: 1px solid #E5E5EA; border-radius: 16px; padding: 12px; margin-bottom: 12px; }
-        .proof-img-box { width: 100%; height: 160px; background: #E5E5EA; border-radius: 12px; margin-bottom: 10px; overflow: hidden; }
-        .proof-img-box img { width: 100%; height: 100%; object-fit: cover; }
-        .proof-actions { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
+        .proof-card { 
+            background: #F9F9FB; 
+            border: 1px solid #E5E5EA; 
+            border-radius: 16px; 
+            padding: 12px; 
+            margin-bottom: 12px; 
+        }
+
+        .proof-img-box { 
+            width: 100%; 
+            height: 160px; 
+            background: #E5E5EA; 
+            border-radius: 12px; 
+            margin-bottom: 10px; 
+            overflow: hidden; 
+        }
+
+        .proof-img-box img { 
+            width: 100%; 
+            height: 100%; 
+            object-fit: cover; 
+        }
+
+        .proof-actions { 
+            display: grid; 
+            grid-template-columns: 1fr 1fr; 
+            gap: 10px; 
+        }
+
+        /* Custom Logo Uploader */
+        .logo-uploader { 
+            width: 100%; 
+            height: 100px; 
+            border: 2px dashed #E5E5EA; 
+            border-radius: 14px; 
+            display: flex; 
+            align-items: center; 
+            justify-content: center; 
+            background: #F9F9FB; 
+            color: var(--text-muted); 
+            cursor: pointer; 
+            transition: 0.2s; 
+            overflow: hidden; 
+            position: relative; 
+        }
+
+        .logo-uploader:active { 
+            transform: scale(0.98); 
+        }
+
+        .logo-uploader img { 
+            width: 100%; 
+            height: 100%; 
+            object-fit: cover; 
+        }
     </style>
 </head>
 <body>
@@ -154,7 +527,9 @@
     <div class="bkash-header-bg">
         <div class="header-top">
             <div class="profile-section">
-                <div class="profile-avatar" id="profileAvatar"><i class="fa-regular fa-user"></i></div>
+                <div class="profile-avatar" id="profileAvatar">
+                    <i class="fa-regular fa-user"></i>
+                </div>
                 <div>
                     <div class="greeting">ক্যাম্পেইন প্যানেল</div>
                     <div class="user-name" id="userNameDisplay">Loading...</div>
@@ -182,7 +557,7 @@
             <div id="step-1" class="step active">
                 <div class="input-group">
                     <label class="input-label">যেকোনো সোশ্যাল মিডিয়ার লিংক দিন</label>
-                    <input type="url" id="campaignLink" class="input-field" placeholder="যেমন: https://t.me/username অথবা YouTube লিংক">
+                    <input type="url" id="campaignLink" class="input-field" placeholder="যেমন: https://t.me/username">
                 </div>
                 <button class="btn btn-primary" id="btn-detect" onclick="detectAndProceed()">এনালাইজ ও নেক্সট</button>
             </div>
@@ -194,12 +569,14 @@
                 
                 <div style="background: #E8F8ED; border: 1px solid rgba(0, 210, 106, 0.3); padding: 16px; border-radius: 16px; margin-bottom: 16px; font-size: 12px; text-align: center; color: #00b85c; font-weight: 600;">
                     <i class="fa-solid fa-robot" style="font-size: 24px; margin-bottom: 8px;"></i>
-                    <br>এটি একটি পাবলিক টেলিগ্রাম লিংক। আমাদের বট অটোমেটিক মেম্বার ভেরিফাই করে পেমেন্ট করবে। দয়া করে বটটিকে অ্যাডমিন হিসেবে যুক্ত করুন।
+                    <br>এটি একটি পাবলিক টেলিগ্রাম লিংক। আমাদের সিকিউর বট অটোমেটিক ভেরিফাই করবে। দয়া করে ডামি বটটিকে আপনার চ্যানেলে অ্যাডমিন বানান।
                 </div>
                 
                 <div class="grid-2" style="margin-bottom: 12px;">
                     <button class="btn btn-outline" onclick="changeStep('step-2', 'step-1')">পেছনে যান</button>
-                    <button class="btn btn-outline" style="color:var(--bkash-pink); border-color:#FFF0F5; background:#FFF0F5;" onclick="openAddBotLink()"><i class="fa-solid fa-plus"></i> বট অ্যাড করুন</button>
+                    <button class="btn btn-outline" style="color:var(--bkash-pink); border-color:#FFF0F5; background:#FFF0F5;" onclick="openAddBotLink()">
+                        <i class="fa-solid fa-plus"></i> বট অ্যাড করুন
+                    </button>
                 </div>
                 <button class="btn btn-primary" id="btn-check-admin" onclick="checkAdminStatus()" style="padding: 16px; font-size: 16px;">
                     ভেরিফাই ও কন্টিনিউ <i class="fa-solid fa-arrow-right"></i>
@@ -209,9 +586,28 @@
             <div id="step-3" class="step">
                 <div id="step-3-badge-container" style="text-align: center; margin-bottom: 10px;"></div>
                 
-                <div id="manual-verify-notice" style="display: none; background: #FFF9E6; border: 1px dashed #FFE4B5; padding: 12px; border-radius: 12px; margin-bottom: 16px; font-size: 11px; text-align: center; color: #B8860B; font-weight: 700; line-height: 1.5;">
-                    <i class="fa-solid fa-camera"></i> ম্যানুয়াল ভেরিফিকেশন মোড<br>
-                    <span style="color:#666; font-weight:600;">ইউজাররা কাজ শেষে স্ক্রিনশট জমা দেবে। আপনি ড্যাশবোর্ড থেকে তা দেখে পেমেন্ট অ্যাপ্রুভ করবেন। ২৪ ঘণ্টার মধ্যে রেসপন্স না করলে অটোমেটিক অ্যাপ্রুভ হয়ে যাবে।</span>
+                <div style="background: #F9F9FB; padding: 16px; border-radius: 16px; margin-bottom: 16px; border: 1px solid rgba(0,0,0,0.03);">
+                    <div style="font-size: 12px; font-weight: 800; color: var(--bkash-pink); margin-bottom: 12px; text-transform: uppercase;">
+                        <i class="fa-solid fa-wand-magic-sparkles"></i> প্রিমিয়াম কাস্টমাইজেশন
+                    </div>
+                    
+                    <div class="input-group">
+                        <label class="input-label">কাস্টম টাইটেল (ঐচ্ছিক)</label>
+                        <input type="text" id="campCustomTitle" class="input-field" placeholder="যেমন: Best Earning BotBD" style="padding: 10px 12px; font-size: 13px;">
+                    </div>
+
+                    <div class="input-group">
+                        <label class="input-label">কাস্টম ডেসক্রিপশন (ঐচ্ছিক)</label>
+                        <textarea id="campCustomDesc" class="input-field" rows="2" placeholder="ইউজারদের জন্য আকর্ষণীয় বার্তা..." style="padding: 10px 12px; font-size: 13px;"></textarea>
+                    </div>
+
+                    <div class="input-group">
+                        <label class="input-label">কাস্টম লোগো (ঐচ্ছিক)</label>
+                        <input type="file" id="campCustomLogoFile" accept="image/*" style="display: none;" onchange="handleLogoSelect(event)">
+                        <div id="logoPreviewBox" class="logo-uploader" onclick="document.getElementById('campCustomLogoFile').click()">
+                            <span id="logoUploadText"><i class="fa-solid fa-cloud-arrow-up" style="margin-right: 6px;"></i> গ্যালারি থেকে ছবি আপলোড করুন</span>
+                        </div>
+                    </div>
                 </div>
 
                 <div class="input-group">
@@ -232,7 +628,9 @@
                 
                 <div style="text-align: center; margin-bottom: 20px; background: #F9F9FB; padding: 16px; border-radius: 16px; border: 1px solid rgba(0,0,0,0.04);">
                     <span style="font-size: 12px; font-weight: 700; color: var(--text-muted); text-transform: uppercase;">সর্বমোট খরচ (ডিপোজিট থেকে কাটবে)</span>
-                    <h2 style="color: var(--bkash-pink); font-size: 36px; font-weight: 900; margin-top: 4px; letter-spacing: -1px;">৳ <span id="campaignCost">0.00</span></h2>
+                    <h2 style="color: var(--bkash-pink); font-size: 36px; font-weight: 900; margin-top: 4px; letter-spacing: -1px;">
+                        ৳ <span id="campaignCost">0.00</span>
+                    </h2>
                 </div>
                 
                 <button class="btn btn-success" id="btn-launch-campaign" onclick="submitCampaign()">ক্যাম্পেইন শুরু করুন</button>
@@ -242,17 +640,6 @@
         
         <h3 class="section-title">আপনার লাইভ ক্যাম্পেইন হিস্ট্রি</h3>
         <div id="myCampaignHistoryList" style="margin-bottom: 20px;"></div>
-
-        <div class="rules-board">
-            <h4><i class="fa-solid fa-circle-info"></i> প্ল্যাটফর্মের নিয়মাবলী</h4>
-            <ul>
-                <li>যেকোনো লিগ্যাল সোশ্যাল মিডিয়া, ওয়েবসাইট, বা টেলিগ্রাম প্রাইভেট/পাবলিক লিংক সাপোর্ট করে।</li>
-                <li><b>টেলিগ্রাম পাবলিক লিংক:</b> আমাদের স্মার্ট AI বট অটোমেটিক মেম্বার ভেরিফাই করে পেমেন্ট করবে।</li>
-                <li><b>অন্যান্য/প্রাইভেট লিংক:</b> ইউজাররা কাজ সম্পন্ন করে স্ক্রিনশট আপলোড করবে। আপনাকে ড্যাশবোর্ড থেকে ছবি দেখে অ্যাপ্রুভ করতে হবে।</li>
-                <li>২৪ ঘণ্টার মধ্যে স্ক্রিনশট রিভিউ না করলে, ইউজারদের স্বার্থে সিস্টেম অটোমেটিক পেমেন্ট অ্যাপ্রুভ করে দেবে।</li>
-                <li>যেকোনো সময় ক্যাম্পেইন ডিলিট করতে পারবেন। বাকি থাকা টাকা সাথে সাথে আপনার ডিপোজিট ব্যালেন্সে রিফান্ড হয়ে যাবে।</li>
-            </ul>
-        </div>
 
     </div>
 
@@ -272,19 +659,21 @@
         <div class="bottom-sheet">
             <div class="drag-handle"></div>
             <div class="close-btn" onclick="closeSheet('reviewSheet')"><i class="fa-solid fa-xmark"></i></div>
-            <h3 style="font-size: 18px; font-weight: 800; margin-bottom: 16px;"><i class="fa-solid fa-images" style="color:var(--bkash-pink);"></i> প্রুফ ভেরিফিকেশন</h3>
-            
-            <div id="proofsContainer">
-                <div style="text-align: center; color: var(--text-muted); font-size: 13px; padding: 20px 0;">লোড হচ্ছে...</div>
-            </div>
+            <h3 style="font-size: 18px; font-weight: 800; margin-bottom: 16px;">
+                <i class="fa-solid fa-images" style="color:var(--bkash-pink);"></i> প্রুফ ভেরিফিকেশন
+            </h3>
+            <div id="proofsContainer"></div>
         </div>
     </div>
 
     <script>
         const tg = window.Telegram.WebApp;
-        tg.ready(); tg.expand();
-        tg.setHeaderColor('#E2136E'); tg.setBackgroundColor('#F4F5F7');
+        tg.ready(); 
+        tg.expand();
+        tg.setHeaderColor('#E2136E'); 
+        tg.setBackgroundColor('#F4F5F7');
 
+        // Firebase Configuration
         const firebaseConfig = {
             apiKey: "AIzaSyAolXMVYn7nLGUz4krYCHHgkBgkBRH4Djk",
             authDomain: "earnerx-506e1.firebaseapp.com",
@@ -294,12 +683,16 @@
             messagingSenderId: "868867404959",
             appId: "1:868867404959:web:c98447df696a9877bf5eaa"
         };
+        
         firebase.initializeApp(firebaseConfig);
         const db = firebase.firestore();
 
-        // 🟢 ADMIN BOT TOKEN FOR TG PUBLIC VERIFY
-        let BOT_TOKEN = "8478970348:AAHO85tbFPFBG0bDTah28-07YZGOPYYOKZw";
-        let BOT_ID = BOT_TOKEN.split(':')[0];
+        // 🟢 NEW DUMMY BOT TOKEN (Security Updated)
+        let DUMMY_BOT_TOKEN = "8867909422:AAEasrJluialvP0y8ORT07EvLRqcZWT2UyE";
+        let DUMMY_BOT_ID = DUMMY_BOT_TOKEN.split(':')[0];
+        
+        // IMGBB API KEY
+        const IMGBB_API_KEY = "f2eb2797e033a6c70d376abe536b8681";
         
         let currentUser = null;
         let tgUser = tg.initDataUnsafe.user; 
@@ -307,15 +700,37 @@
         let detectedChatUsername = "";
         let detectedPlatformType = "unknown";
         let detectedChatType = "";
+        let selectedCustomLogoFile = null;
 
-        function formatMoney(num) { return parseFloat(num).toFixed(2); }
-        function safeOpenLink(url) { tg.openLink(url); }
-        function safeHapticFeedback(type) { if (tg.HapticFeedback) { type === 'success' ? tg.HapticFeedback.notificationOccurred('success') : tg.HapticFeedback.impactOccurred('light'); } }
+        // Utility Functions
+        function formatMoney(num) { 
+            return parseFloat(num).toFixed(2); 
+        }
 
-        function closeSheetOutside(e, sheetId) { if(e.target.id === sheetId) closeSheet(sheetId); }
-        function closeSheet(sheetId) { document.getElementById(sheetId).classList.remove('active'); }
-        function openSheet(sheetId) { document.getElementById(sheetId).classList.add('active'); safeHapticFeedback('light'); }
+        function safeOpenLink(url) { 
+            tg.openLink(url); 
+        }
 
+        function safeHapticFeedback(type) { 
+            if (tg.HapticFeedback) { 
+                type === 'success' ? tg.HapticFeedback.notificationOccurred('success') : tg.HapticFeedback.impactOccurred('light'); 
+            } 
+        }
+
+        function closeSheetOutside(e, sheetId) { 
+            if(e.target.id === sheetId) closeSheet(sheetId); 
+        }
+
+        function closeSheet(sheetId) { 
+            document.getElementById(sheetId).classList.remove('active'); 
+        }
+
+        function openSheet(sheetId) { 
+            document.getElementById(sheetId).classList.add('active'); 
+            safeHapticFeedback('light'); 
+        }
+
+        // Cache loader for fast UI rendering
         function loadCachedUI() {
             const cachedName = localStorage.getItem('cache_name') || (tgUser ? tgUser.first_name : 'User');
             const cachedBal = localStorage.getItem('cache_earn_bal') || '0.00';
@@ -332,8 +747,10 @@
                 }
             }
         }
+        
         loadCachedUI();
 
+        // Boot App Function
         async function initApp() {
             if (!tgUser) {
                 document.body.innerHTML = `<div style="text-align:center; padding: 50px 20px; font-weight: bold; color: var(--text-main);">দয়া করে টেলিগ্রাম অ্যাপ থেকে বটটি ওপেন করুন।</div>`;
@@ -351,25 +768,13 @@
                     
                     document.getElementById('userNameDisplay').innerText = currentUser.first_name || 'User';
                     document.getElementById('headerBalance').innerText = formatMoney(currentUser.earningBalance || 0);
-                } else {
-                    const newUser = {
-                        userId: userId,
-                        first_name: tgUser.first_name || '',
-                        last_name: tgUser.last_name || '',
-                        username: tgUser.username || '',
-                        photo_url: tgUser.photo_url || '',
-                        earningBalance: 0.00,
-                        depositBalance: 0.00,
-                        totalCompletedTasks: 0,
-                        completedTasks: [],
-                        createdAt: firebase.firestore.FieldValue.serverTimestamp()
-                    };
-                    userRef.set(newUser);
                 }
             });
+
             loadMyCampaigns(userId);
         }
 
+        // Extract Telegram Username Logic
         function extractTelegramUsername(url) {
             if(url.includes('joinchat') || url.includes('+')) return 'private';
             const regex = /(?:t\.me\/|telegram\.me\/|@)([a-zA-Z0-9_]{5,32})/;
@@ -377,6 +782,7 @@
             return match ? match[1] : null;
         }
 
+        // Detect Platform & Proceed
         async function detectAndProceed() {
             const link = document.getElementById('campaignLink').value.trim();
             const btn = document.getElementById('btn-detect');
@@ -394,34 +800,32 @@
                     detectedPlatformType = 'telegram';
                     detectedChatUsername = extractTelegramUsername(link);
                     
-                    // IF PRIVATE TELEGRAM LINK
                     if(detectedChatUsername === 'private') {
                         setupStep3Badge(true); 
                         changeStep('step-1', 'step-3');
                         return;
                     }
-                    
                     if(!detectedChatUsername) {
-                        Swal.fire({ title: "ভুল লিংক", text: "সঠিক টেলিগ্রাম লিংক দিন।", icon: "error", confirmButtonColor: "#E2136E" });
+                        Swal.fire({ title: "ভুল লিংক", text: "সঠিক টেলিগ্রাম লিংক দিন।", icon: "error" });
                         return;
                     }
 
-                    // CHECK PUBLIC TELEGRAM BOT ACCESS
                     try {
-                        const res = await fetch(`https://api.telegram.org/bot${BOT_TOKEN}/getChat?chat_id=@${detectedChatUsername}`);
+                        const res = await fetch(`https://api.telegram.org/bot${DUMMY_BOT_TOKEN}/getChat?chat_id=@${detectedChatUsername}`);
                         const data = await res.json();
                         detectedChatType = data.ok ? data.result.type : 'unknown';
-                    } catch(e) { detectedChatType = 'unknown'; }
+                    } catch(e) { 
+                        detectedChatType = 'unknown'; 
+                    }
                     
                     changeStep('step-1', 'step-2');
                 } 
                 else {
-                    // OTHER PLATFORMS (Manual Verify)
                     if(link.includes('youtube.com') || link.includes('youtu.be')) detectedPlatformType = 'youtube';
                     else if(link.includes('facebook.com') || link.includes('fb.watch')) detectedPlatformType = 'facebook';
                     else detectedPlatformType = 'website';
                     
-                    setupStep3Badge(true); // True means show manual verify notice
+                    setupStep3Badge(true);
                     changeStep('step-1', 'step-3'); 
                 }
             } catch(e) {
@@ -436,53 +840,47 @@
 
         function setupStep3Badge(isManual) {
             const container = document.getElementById('step-3-badge-container');
-            const notice = document.getElementById('manual-verify-notice');
-            
-            if(detectedPlatformType === 'youtube') container.innerHTML = `<div class="platform-badge badge-yt"><i class="fa-brands fa-youtube"></i> ইউটিউব লিংক ডিটেক্টেড</div>`;
-            else if(detectedPlatformType === 'facebook') container.innerHTML = `<div class="platform-badge badge-fb"><i class="fa-brands fa-facebook"></i> ফেসবুক লিংক ডিটেক্টেড</div>`;
-            else if(detectedPlatformType === 'telegram') container.innerHTML = `<div class="platform-badge badge-tg"><i class="fa-brands fa-telegram"></i> টেলিগ্রাম লিংক ডিটেক্টেড</div>`;
-            else container.innerHTML = `<div class="platform-badge badge-web"><i class="fa-solid fa-globe"></i> ওয়েবসাইট লিংক ডিটেক্টেড</div>`;
-            
-            notice.style.display = isManual ? 'block' : 'none';
+            if(detectedPlatformType === 'youtube') {
+                container.innerHTML = `<div class="platform-badge badge-yt"><i class="fa-brands fa-youtube"></i> ইউটিউব লিংক ডিটেক্টেড</div>`;
+            } else if(detectedPlatformType === 'facebook') {
+                container.innerHTML = `<div class="platform-badge badge-fb"><i class="fa-brands fa-facebook"></i> ফেসবুক লিংক ডিটেক্টেড</div>`;
+            } else if(detectedPlatformType === 'telegram') {
+                container.innerHTML = `<div class="platform-badge badge-tg"><i class="fa-brands fa-telegram"></i> টেলিগ্রাম লিংক ডিটেক্টেড</div>`;
+            } else {
+                container.innerHTML = `<div class="platform-badge badge-web"><i class="fa-solid fa-globe"></i> ওয়েবসাইট লিংক ডিটেক্টেড</div>`;
+            }
         }
 
+        // 🟢 OPEN DUMMY BOT FOR ADMIN ADDITION
         function openAddBotLink() {
-            let url = `https://t.me/Bkash_Money_Cashh_bot`;
-            if(detectedChatType === 'channel') url += `?startchannel=true`;
-            else url += `?startgroup=true`;
+            let url = `https://t.me/BkashVerify_Bot`;
+            if(detectedChatType === 'channel') {
+                url += `?startchannel=true`;
+            } else {
+                url += `?startgroup=true`;
+            }
             safeOpenLink(url);
         }
 
+        // 🟢 VERIFY USING DUMMY BOT
         async function checkAdminStatus() {
             const btn = document.getElementById('btn-check-admin');
-            
-            if(!detectedChatUsername || detectedChatUsername === 'private') {
-                Swal.fire({ title: "এরর", text: "সঠিক টেলিগ্রাম ইউজারনেম পাওয়া যায়নি।", icon: "error", confirmButtonColor: "#E2136E" });
-                return;
-            }
+            if(!detectedChatUsername || detectedChatUsername === 'private') return;
 
             btn.innerHTML = '<i class="fa-solid fa-spinner fa-spin"></i> ভেরিফাই করা হচ্ছে...';
             btn.disabled = true;
 
             try {
-                const botRes = await fetch(`https://api.telegram.org/bot${BOT_TOKEN}/getChatMember?chat_id=@${detectedChatUsername}&user_id=${BOT_ID}`);
+                const botRes = await fetch(`https://api.telegram.org/bot${DUMMY_BOT_TOKEN}/getChatMember?chat_id=@${detectedChatUsername}&user_id=${DUMMY_BOT_ID}`);
                 const botData = await botRes.json();
 
                 if(botData.ok && (botData.result.status === 'administrator' || botData.result.status === 'creator')) {
-                    const userRes = await fetch(`https://api.telegram.org/bot${BOT_TOKEN}/getChatMember?chat_id=@${detectedChatUsername}&user_id=${tgUser.id}`);
-                    const userData = await userRes.json();
-
-                    if(userData.ok && (userData.result.status === 'administrator' || userData.result.status === 'creator')) {
-                        safeHapticFeedback('success');
-                        setupStep3Badge(false); // False means auto-verify (hide manual notice)
-                        changeStep('step-2', 'step-3');
-                    } else {
-                        safeHapticFeedback('error');
-                        Swal.fire({ title: "পারমিশন নেই!", text: "আপনি এই চ্যানেল/গ্রুপের মালিক বা অ্যাডমিন নন। অন্যের লিংক দিয়ে ক্যাম্পেইন করা নিষেধ!", icon: "error", confirmButtonColor: "#E2136E" });
-                    }
+                    safeHapticFeedback('success');
+                    setupStep3Badge(false); 
+                    changeStep('step-2', 'step-3');
                 } else {
                     safeHapticFeedback('error');
-                    Swal.fire({ title: "অ্যাডমিন পাওয়া যায়নি!", text: "আমাদের বটটি আপনার দেওয়া লিংকে অ্যাডমিন হিসেবে যুক্ত নেই।", icon: "error", confirmButtonColor: "#E2136E" });
+                    Swal.fire({ title: "অ্যাডমিন পাওয়া যায়নি!", text: "আমাদের ডামি বটটি আপনার দেওয়া লিংকে অ্যাডমিন হিসেবে যুক্ত নেই।", icon: "error", confirmButtonColor: "#E2136E" });
                 }
             } catch(e) {
                 Swal.fire({ title: "সার্ভার এরর", text: "নেটওয়ার্ক সমস্যা, আবার চেষ্টা করুন।", icon: "warning", confirmButtonColor: "#E2136E" });
@@ -506,37 +904,86 @@
             return total;
         }
 
+        // --- Custom Logo Preview System (ImgBB Logic Preparation) ---
+        function handleLogoSelect(event) {
+            const file = event.target.files[0];
+            if (file) {
+                selectedCustomLogoFile = file;
+                const reader = new FileReader();
+                reader.onload = function(e) {
+                    document.getElementById('logoPreviewBox').innerHTML = `<img src="${e.target.result}" alt="Logo Preview">`;
+                }
+                reader.readAsDataURL(file);
+            }
+        }
+
+        // --- Submit Campaign with Full Logic ---
         async function submitCampaign() {
             const link = document.getElementById('campaignLink').value;
             const reward = parseFloat(document.getElementById('rewardPerUser').value);
             const members = parseInt(document.getElementById('campaignMembers').value);
             const totalCost = reward * members;
+            
+            const customTitle = document.getElementById('campCustomTitle').value.trim();
+            const customDesc = document.getElementById('campCustomDesc').value.trim();
 
             if(!reward || isNaN(reward) || reward < 0.40 || reward > 10.00) {
-                Swal.fire({ title: "সতর্কতা", text: "রিওয়ার্ড ০.৪০ ৳ থেকে ১০.০০ ৳ এর মধ্যে হতে হবে।", icon: "warning", confirmButtonColor: "#E2136E" });
+                Swal.fire("সতর্কতা", "রিওয়ার্ড ০.৪০ ৳ থেকে ১০.০০ ৳ এর মধ্যে হতে হবে।", "warning"); 
                 return;
             }
             if(!members || isNaN(members) || members < 20) {
-                Swal.fire({ title: "সতর্কতা", text: "টার্গেট মেম্বার নূন্যতম ২০ জন হতে হবে।", icon: "warning", confirmButtonColor: "#E2136E" });
+                Swal.fire("সতর্কতা", "টার্গেট মেম্বার নূন্যতম ২০ জন হতে হবে।", "warning"); 
                 return;
             }
 
             const btn = document.getElementById('btn-launch-campaign');
-            btn.disabled = true; btn.innerText = "সার্ভার প্রসেসিং...";
+            btn.disabled = true; 
+            btn.innerHTML = '<i class="fa-solid fa-spinner fa-spin"></i> সার্ভার প্রসেসিং...';
+
+            Swal.fire({ 
+                title: "প্রসেসিং হচ্ছে...", 
+                text: "ক্যাম্পেইন তৈরি হচ্ছে, অপেক্ষা করুন।", 
+                allowOutsideClick: false, 
+                didOpen: () => { Swal.showLoading(); }
+            });
 
             try {
+                // Step 1: Handle Custom Logo Upload via ImgBB
+                let finalLogoUrl = "";
+                if (selectedCustomLogoFile) {
+                    const formData = new FormData();
+                    formData.append('image', selectedCustomLogoFile);
+                    
+                    const imgbbRes = await fetch(`https://api.imgbb.com/1/upload?key=${IMGBB_API_KEY}`, { 
+                        method: 'POST', 
+                        body: formData 
+                    });
+                    
+                    const imgbbData = await imgbbRes.json();
+                    
+                    if(imgbbData.success) {
+                        finalLogoUrl = imgbbData.data.url;
+                    }
+                }
+
+                // Step 2: Database Transaction
                 await db.runTransaction(async (transaction) => {
                     const userRef = db.collection('users').doc(currentUser.userId);
                     const userDoc = await transaction.get(userRef);
                     
                     if (!userDoc.exists) throw "User not found";
-                    const currentDeposit = userDoc.data().depositBalance || 0;
                     
+                    const currentDeposit = userDoc.data().depositBalance || 0;
                     if (currentDeposit < totalCost) throw "Insufficient Balance";
 
                     const campRef = db.collection('campaigns').doc();
                     
-                    transaction.update(userRef, { depositBalance: firebase.firestore.FieldValue.increment(-totalCost) });
+                    // Deduct from deposit balance
+                    transaction.update(userRef, { 
+                        depositBalance: firebase.firestore.FieldValue.increment(-totalCost) 
+                    });
+                    
+                    // Setup new campaign document
                     transaction.set(campRef, {
                         id: campRef.id,
                         creatorId: currentUser.userId,
@@ -546,31 +993,53 @@
                         targetMembers: members,
                         completedMembers: 0,
                         status: 'active',
+                        customTitle: customTitle, 
+                        customDesc: customDesc,   
+                        customLogo: finalLogoUrl, 
                         createdAt: firebase.firestore.FieldValue.serverTimestamp()
                     });
                 });
 
                 safeHapticFeedback('success');
-                Swal.fire({ title: "সফল হয়েছে!", text: "আপনার ক্যাম্পেইন সফলভাবে চালু হয়েছে!", icon: "success", confirmButtonColor: "#E2136E" });
+                Swal.fire({ 
+                    title: "সফল হয়েছে!", 
+                    text: "আপনার কাস্টম ক্যাম্পেইন লাইভ হয়েছে!", 
+                    icon: "success", 
+                    confirmButtonColor: "#E2136E" 
+                });
                 
+                // Reset Fields
                 document.getElementById('campaignLink').value = '';
                 document.getElementById('rewardPerUser').value = '';
                 document.getElementById('campaignMembers').value = '';
+                document.getElementById('campCustomTitle').value = '';
+                document.getElementById('campCustomDesc').value = '';
                 document.getElementById('campaignCost').innerText = '0.00';
+                
+                selectedCustomLogoFile = null;
+                document.getElementById('logoPreviewBox').innerHTML = `<span id="logoUploadText"><i class="fa-solid fa-cloud-arrow-up" style="margin-right: 6px;"></i> গ্যালারি থেকে ছবি আপলোড করুন</span>`;
+                
                 changeStep('step-3', 'step-1');
                 
             } catch (error) {
                 if (error === "Insufficient Balance") {
-                    Swal.fire({ title: "ব্যালেন্স নেই!", text: "ডিপোজিট ব্যালেন্সে পর্যাপ্ত টাকা নেই। দয়া করে ডিপোজিট করুন।", icon: "error", confirmButtonColor: "#E2136E" }).then(() => { window.location.href = "wallet.html"; });
+                    Swal.fire({ 
+                        title: "ব্যালেন্স নেই!", 
+                        text: "ডিপোজিট ব্যালেন্সে পর্যাপ্ত টাকা নেই। দয়া করে ডিপোজিট করুন।", 
+                        icon: "error" 
+                    }).then(() => { 
+                        window.location.href = "wallet.html"; 
+                    });
                 } else {
-                    Swal.fire({ title: "সমস্যা হয়েছে!", text: "ট্রানজেকশন ফেইল হয়েছে। আবার চেষ্টা করুন।", icon: "error", confirmButtonColor: "#E2136E" });
+                    Swal.fire({ title: "সমস্যা হয়েছে!", text: "ট্রানজেকশন ফেইল হয়েছে। আবার চেষ্টা করুন।", icon: "error" });
                 }
             } finally {
-                btn.disabled = false; btn.innerText = "ক্যাম্পেইন শুরু করুন";
+                btn.disabled = false; 
+                btn.innerText = "ক্যাম্পেইন শুরু করুন";
             }
         }
 
-        // --- LOAD MY CAMPAIGNS (No Firebase Indexing Required) ---
+        // --- Load Campaign History ---
         function loadMyCampaigns(userId) {
             db.collection('campaigns').where('creatorId', '==', userId).onSnapshot(snapshot => {
                 const container = document.getElementById('myCampaignHistoryList');
@@ -581,27 +1050,23 @@
                 }
 
                 let campaignsArray = [];
-                snapshot.forEach(doc => {
-                    campaignsArray.push(doc.data());
+                snapshot.forEach(doc => { 
+                    campaignsArray.push(doc.data()); 
                 });
-
-                // Sort by Timestamp in JavaScript
-                campaignsArray.sort((a, b) => {
-                    let timeA = a.createdAt ? a.createdAt.toMillis() : 0;
-                    let timeB = b.createdAt ? b.createdAt.toMillis() : 0;
-                    return timeB - timeA; // Descending (Newest First)
+                
+                campaignsArray.sort((a, b) => { 
+                    return (b.createdAt ? b.createdAt.toMillis() : 0) - (a.createdAt ? a.createdAt.toMillis() : 0); 
                 });
 
                 let htmlCache = '';
                 let validCampaignCount = 0;
 
                 campaignsArray.forEach(camp => {
-                    // ডিলিট করা ক্যাম্পেইনগুলো হাইড করার লজিক
+                    // Do not render deleted campaigns
                     if(camp.status === 'deleted') return;
-                    
                     validCampaignCount++;
 
-                    // Auto Update Status to completed if target reached
+                    // Mark as completed if target reached
                     if(camp.completedMembers >= camp.targetMembers && camp.status !== 'completed') {
                         db.collection('campaigns').doc(camp.id).update({status: 'completed'});
                         camp.status = 'completed';
@@ -610,12 +1075,16 @@
                     const progress = Math.min(Math.round((camp.completedMembers / camp.targetMembers) * 100), 100);
                     const isDone = camp.status === 'completed';
                     
-                    let icon = 'fa-link'; let color = 'var(--text-muted)'; let pName = 'Website';
-                    if(camp.platformType === 'telegram') { icon = 'fa-telegram'; color = 'var(--tg-blue)'; pName = 'Telegram'; }
-                    else if(camp.platformType === 'youtube') { icon = 'fa-youtube'; color = '#FF0000'; pName = 'YouTube'; }
-                    else if(camp.platformType === 'facebook') { icon = 'fa-facebook'; color = '#1877F2'; pName = 'Facebook'; }
+                    let icon = 'fa-link'; 
+                    let color = 'var(--text-muted)'; 
+                    let pName = camp.customTitle || 'Website';
                     
-                    // Action Buttons based on Platform & Status
+                    if(!camp.customTitle) {
+                        if(camp.platformType === 'telegram') { icon = 'fa-telegram'; color = 'var(--tg-blue)'; pName = 'Telegram'; }
+                        else if(camp.platformType === 'youtube') { icon = 'fa-youtube'; color = '#FF0000'; pName = 'YouTube'; }
+                        else if(camp.platformType === 'facebook') { icon = 'fa-facebook'; color = '#1877F2'; pName = 'Facebook'; }
+                    }
+
                     let actionHtml = '';
                     if(!isDone) {
                         if(camp.platformType !== 'telegram' || (camp.platformType === 'telegram' && camp.link.includes('joinchat'))) {
@@ -623,6 +1092,8 @@
                         } else {
                             actionHtml += `<div style="font-size:11px; color:var(--success); font-weight:700;"><i class="fa-solid fa-robot"></i> অটো-ভেরিফাই রানিং...</div>`;
                         }
+                        
+                        // Delete Button (Triggers Refund)
                         actionHtml += `<button class="btn btn-danger" style="padding:8px 12px; font-size:12px; width:auto; border-radius:8px;" onclick="deleteCampaign('${camp.id}', ${camp.targetMembers - camp.completedMembers}, ${camp.rewardPerUser})"><i class="fa-solid fa-trash-can"></i></button>`;
                     } else {
                         actionHtml += `<div style="width:100%; text-align:center; font-size:12px; color:var(--success); font-weight:800;"><i class="fa-solid fa-circle-check"></i> ক্যাম্পেইন সম্পন্ন হয়েছে</div>`;
@@ -633,7 +1104,7 @@
                             <div style="display: flex; justify-content: space-between; align-items: flex-end;">
                                 <div>
                                     <div style="font-size: 14px; font-weight: 800; color: var(--text-main); margin-bottom: 4px;">
-                                        <i class="fa-brands ${icon}" style="color:${color}; margin-right:4px;"></i> ${pName} Campaign
+                                        <i class="fa-brands ${icon}" style="color:${color}; margin-right:4px;"></i> ${pName}
                                     </div>
                                     <div style="font-size: 11px; color: var(--text-muted); font-weight: 600;">সম্পন্ন: ${camp.completedMembers}/${camp.targetMembers} জন</div>
                                 </div>
@@ -645,39 +1116,37 @@
                             <div class="progress-bg">
                                 <div class="progress-fill" style="width: ${progress}%; background: ${isDone ? 'var(--success)' : ''}"></div>
                             </div>
-                            <div class="action-row">
-                                ${actionHtml}
-                            </div>
+                            <div class="action-row">${actionHtml}</div>
                         </div>
                     `;
                 });
 
-                if(validCampaignCount === 0) {
-                    container.innerHTML = `<div class="glass-card" style="text-align: center; color: var(--text-muted); font-size: 13px; padding: 30px 0;"><i class="fa-solid fa-folder-open" style="font-size: 32px; margin-bottom: 10px; opacity: 0.3;"></i><br>কোনো ক্যাম্পেইন পাওয়া যায়নি</div>`;
-                } else {
-                    container.innerHTML = htmlCache;
-                }
+                container.innerHTML = validCampaignCount === 0 ? `<div class="glass-card" style="text-align: center; color: var(--text-muted); font-size: 13px; padding: 30px 0;"><i class="fa-solid fa-folder-open" style="font-size: 32px; margin-bottom: 10px; opacity: 0.3;"></i><br>কোনো ক্যাম্পেইন পাওয়া যায়নি</div>` : htmlCache;
             });
         }
 
-        // --- DELETE CAMPAIGN & REFUND SYSTEM ---
+        // --- Delete & Refund System ---
         function deleteCampaign(campId, remainingMembers, rewardPerUser) {
             safeHapticFeedback('light');
             Swal.fire({
                 title: 'ক্যাম্পেইন ডিলিট করবেন?',
-                html: `আপনি কি নিশ্চিত? বাকি থাকা <b>${remainingMembers} জনের</b> টাকা (৳${formatMoney(remainingMembers * rewardPerUser)}) আপনার ডিপোজিট ব্যালেন্সে সাথে সাথে রিফান্ড করে দেওয়া হবে।`,
+                html: `আপনি কি নিশ্চিত? বাকি থাকা <b>${remainingMembers} জনের</b> টাকা (৳${formatMoney(remainingMembers * rewardPerUser)}) আপনার ডিপোজিট ব্যালেন্সে রিফান্ড হবে।`,
                 icon: 'warning',
-                showCancelButton: true,
-                confirmButtonColor: '#FF3B30',
-                cancelButtonColor: '#8E8E93',
-                confirmButtonText: 'হ্যাঁ, ডিলিট করুন!',
+                showCancelButton: true, 
+                confirmButtonColor: '#FF3B30', 
+                cancelButtonColor: '#8E8E93', 
+                confirmButtonText: 'হ্যাঁ, ডিলিট করুন!', 
                 cancelButtonText: 'বাতিল'
             }).then(async (result) => {
                 if (result.isConfirmed) {
-                    Swal.fire({ title: "প্রসেসিং...", allowOutsideClick: false, didOpen: () => { Swal.showLoading(); }});
+                    Swal.fire({ 
+                        title: "প্রসেসিং...", 
+                        allowOutsideClick: false, 
+                        didOpen: () => { Swal.showLoading(); }
+                    });
+
                     try {
                         const refundAmount = remainingMembers * rewardPerUser;
-                        
                         await db.runTransaction(async (transaction) => {
                             const userRef = db.collection('users').doc(currentUser.userId);
                             const campRef = db.collection('campaigns').doc(campId);
@@ -688,65 +1157,62 @@
 
                         safeHapticFeedback('success');
                         Swal.fire('ডিলিট সম্পন্ন!', `ক্যাম্পেইন বাতিল হয়েছে এবং ৳${formatMoney(refundAmount)} রিফান্ড করা হয়েছে।`, 'success');
-                    } catch(e) {
-                        Swal.fire('সমস্যা!', 'সার্ভারে কানেক্ট করা যাচ্ছে না।', 'error');
+                    } catch(e) { 
+                        Swal.fire('সমস্যা!', 'সার্ভারে কানেক্ট করা যাচ্ছে না।', 'error'); 
                     }
                 }
             });
         }
 
-        // --- LOAD PROOFS FOR REVIEW ---
+        // --- Load Pending Proofs ---
         function loadPendingProofs(campId, rewardAmount) {
             openSheet('reviewSheet');
             const container = document.getElementById('proofsContainer');
             container.innerHTML = `<div style="text-align: center; color: var(--text-muted); font-size: 13px; padding: 20px 0;"><i class="fa-solid fa-spinner fa-spin"></i> ছবি লোড হচ্ছে...</div>`;
 
-            // Realtime listener for proofs
             db.collection('proofs').where('taskId', '==', campId).where('status', '==', 'pending').onSnapshot(snapshot => {
                 if(snapshot.empty) {
-                    container.innerHTML = `<div style="text-align: center; color: var(--success); font-size: 13px; padding: 30px 0; font-weight:800;"><i class="fa-solid fa-check-double" style="font-size:24px; margin-bottom:8px;"></i><br>নতুন কোনো প্রুফ নেই!</div>`;
+                    container.innerHTML = `<div style="text-align: center; color: var(--success); font-size: 13px; padding: 30px 0; font-weight:800;"><i class="fa-solid fa-check-double" style="font-size:24px; margin-bottom:8px;"></i><br>নতুন কোনো প্রুফ নেই!</div>`; 
                     return;
                 }
 
-                let html = '';
-                const now = Date.now();
+                let html = ''; 
+                const now = Date.now(); 
                 const TWENTY_FOUR_HOURS = 24 * 60 * 60 * 1000;
 
                 snapshot.forEach(doc => {
                     const proof = doc.data();
                     
-                    // Auto-Approve Check (Client Side Trigger for unhandled old proofs)
                     if(proof.createdAt && (now - proof.createdAt.toMillis() > TWENTY_FOUR_HOURS)) {
-                        handleProofAction(proof.proofId, proof.userId, proof.taskId, rewardAmount, 'approve', true);
-                        return; // Skip rendering this one, it's auto-approving
+                        handleProofAction(proof.proofId, proof.userId, proof.taskId, rewardAmount, 'approve', true); 
+                        return;
                     }
 
                     html += `
                         <div class="proof-card" id="proof-${proof.proofId}">
                             <div style="font-size:11px; font-family:monospace; color:var(--text-muted); margin-bottom:6px;">User ID: ${proof.userId}</div>
                             <div class="proof-img-box">
-                                <a href="${proof.imageUrl}" target="_blank"><img src="${proof.imageUrl}" alt="Proof"></a>
+                                <a href="${proof.imageUrl}" target="_blank">
+                                    <img src="${proof.imageUrl}" alt="Proof">
+                                </a>
                             </div>
                             <div class="proof-actions">
                                 <button class="btn" style="background:#E8F8ED; color:var(--success);" onclick="handleProofAction('${proof.proofId}', '${proof.userId}', '${proof.taskId}', ${rewardAmount}, 'approve', false)"><i class="fa-solid fa-check"></i> Approve</button>
                                 <button class="btn" style="background:#FFF0F5; color:var(--danger);" onclick="handleProofAction('${proof.proofId}', '${proof.userId}', '${proof.taskId}', ${rewardAmount}, 'reject', false)"><i class="fa-solid fa-xmark"></i> Reject</button>
                             </div>
-                        </div>
-                    `;
+                        </div>`;
                 });
                 
-                if(html === '') container.innerHTML = `<div style="text-align: center; color: var(--success); font-size: 13px; padding: 30px 0; font-weight:800;"><i class="fa-solid fa-check-double" style="font-size:24px; margin-bottom:8px;"></i><br>নতুন কোনো প্রুফ নেই!</div>`;
-                else container.innerHTML = html;
+                container.innerHTML = html === '' ? `<div style="text-align: center; color: var(--success); font-size: 13px; padding: 30px 0; font-weight:800;"><i class="fa-solid fa-check-double" style="font-size:24px; margin-bottom:8px;"></i><br>নতুন কোনো প্রুফ নেই!</div>` : html;
             });
         }
 
-        // --- HANDLE APPROVE / REJECT ---
+        // --- Handle Approve / Reject Proof ---
         async function handleProofAction(proofId, targetUserId, campId, rewardAmount, action, isAuto) {
             try {
-                // Optimistic UI hide
-                const card = document.getElementById(`proof-${proofId}`);
+                const card = document.getElementById(`proof-${proofId}`); 
                 if(card) card.style.opacity = '0.5';
-
+                
                 const batch = db.batch();
                 const proofRef = db.collection('proofs').doc(proofId);
                 
@@ -756,13 +1222,12 @@
                     
                     batch.update(proofRef, { status: 'approved' });
                     batch.update(userRef, { 
-                        earningBalance: firebase.firestore.FieldValue.increment(Number(rewardAmount)),
-                        completedTasks: firebase.firestore.FieldValue.arrayUnion(campId)
+                        earningBalance: firebase.firestore.FieldValue.increment(Number(rewardAmount)), 
+                        completedTasks: firebase.firestore.FieldValue.arrayUnion(campId) 
                     });
                     batch.update(campRef, { completedMembers: firebase.firestore.FieldValue.increment(1) });
-                } else {
-                    batch.update(proofRef, { status: 'rejected' });
-                    // Notice: We don't remove it from pendingTasks, just mark proof rejected so user can't re-do easily without contacting admin.
+                } else { 
+                    batch.update(proofRef, { status: 'rejected' }); 
                 }
 
                 await batch.commit();
@@ -770,13 +1235,13 @@
                 if(!isAuto) safeHapticFeedback('success');
 
             } catch(e) {
-                console.error("Proof Action Error:", e);
                 if(!isAuto) Swal.fire('Error', 'অ্যাকশন কমপ্লিট করা যায়নি।', 'error');
-                const card = document.getElementById(`proof-${proofId}`);
+                const card = document.getElementById(`proof-${proofId}`); 
                 if(card) card.style.opacity = '1';
             }
         }
 
+        // Run the app
         initApp();
     </script>
 </body>
