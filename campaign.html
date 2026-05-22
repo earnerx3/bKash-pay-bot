@@ -1,0 +1,576 @@
+<!DOCTYPE html>
+<html lang="bn">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
+    <title>Bkash Pay - Campaign</title>
+    
+    <script src="https://telegram.org/js/telegram-web-app.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-firestore-compat.js"></script>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+    
+    <style>
+        :root {
+            --bkash-pink: #E2136E; 
+            --bkash-pink-dark: #b80c56;
+            --tg-theme-bg: #F4F5F7;
+            --tg-blue: #007AFF;
+            --success: #00d26a;
+            --warning: #FF9500;
+            --text-main: #1C1C1E;
+            --text-muted: #8E8E93;
+            --glass-bg: rgba(255, 255, 255, 0.95);
+        }
+
+        * { margin: 0; padding: 0; box-sizing: border-box; font-family: -apple-system, BlinkMacSystemFont, "SF Pro Display", sans-serif; }
+        body { background-color: var(--tg-theme-bg); color: var(--text-main); padding-bottom: 90px; -webkit-tap-highlight-color: transparent; }
+
+        /* --- PREMIUM BKASH HEADER --- */
+        .bkash-header-bg {
+            background: linear-gradient(180deg, var(--bkash-pink) 0%, var(--bkash-pink-dark) 100%);
+            padding: 24px 20px 70px 20px; 
+            border-bottom-left-radius: 35px; border-bottom-right-radius: 35px;
+            color: white; box-shadow: 0 10px 25px rgba(226, 19, 110, 0.25); position: relative;
+        }
+
+        .header-top { display: flex; justify-content: space-between; align-items: center; }
+        .profile-section { display: flex; align-items: center; gap: 12px; }
+        .profile-avatar {
+            width: 44px; height: 44px; background: rgba(255, 255, 255, 0.2);
+            border: 2px solid rgba(255, 255, 255, 0.5); border-radius: 50%;
+            display: flex; justify-content: center; align-items: center; font-size: 20px; color: white; backdrop-filter: blur(5px);
+        }
+        .greeting { font-size: 11px; opacity: 0.9; font-weight: 600; text-transform: uppercase; letter-spacing: 0.5px;}
+        .user-name { font-size: 17px; font-weight: 800; letter-spacing: 0.2px; margin-top: 2px;}
+
+        /* --- TOP RIGHT DYNAMIC BALANCE --- */
+        .balance-badge {
+            background: rgba(255, 255, 255, 0.15); backdrop-filter: blur(10px); -webkit-backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.3); padding: 8px 14px; border-radius: 20px;
+            display: flex; align-items: center; gap: 8px; box-shadow: 0 4px 10px rgba(0,0,0,0.1);
+        }
+        .balance-text { color: #ffffff; font-weight: 800; font-size: 15px; display: flex; align-items: center; gap: 4px; }
+        .dynamic-light {
+            width: 8px; height: 8px; background-color: #00ff73; border-radius: 50%; display: inline-block; 
+            box-shadow: 0 0 0 rgba(0, 255, 115, 0.7); animation: pulse-light 2s infinite cubic-bezier(0.66, 0, 0, 1); margin-left: 4px;
+        }
+        @keyframes pulse-light { to { box-shadow: 0 0 0 8px rgba(0, 255, 115, 0); } }
+
+        /* --- MAIN CONTENT & CARDS --- */
+        .main-container { margin-top: -45px; padding: 0 16px; position: relative; z-index: 10; }
+        
+        .glass-card {
+            background: #FFFFFF; border: 1px solid rgba(0,0,0,0.04); border-radius: 20px;
+            box-shadow: 0 8px 25px rgba(226, 19, 110, 0.08); padding: 20px; margin-bottom: 20px;
+        }
+
+        .section-title { font-size: 14px; font-weight: 800; color: #6e6e73; margin: 20px 4px 12px 4px; letter-spacing: 0.2px; }
+
+        /* FORM ELEMENTS */
+        .input-group { margin-bottom: 18px; }
+        .input-label { font-size: 13px; font-weight: 700; margin-bottom: 8px; display: flex; justify-content: space-between; color: var(--text-main);}
+        .input-field { 
+            width: 100%; padding: 14px 16px; background: #F9F9FB; border: 1px solid rgba(0,0,0,0.06); 
+            border-radius: 14px; font-size: 15px; font-weight: 600; outline: none; transition: 0.3s; 
+        }
+        .input-field:focus { border-color: var(--bkash-pink); background: white; box-shadow: 0 0 0 3px rgba(226, 19, 110, 0.1); }
+        
+        .btn { width: 100%; padding: 14px; border: none; border-radius: 14px; font-size: 15px; font-weight: 800; cursor: pointer; transition: 0.2s; text-align: center; display: flex; justify-content: center; align-items: center; gap: 8px;}
+        .btn:disabled { opacity: 0.7; cursor: not-allowed; }
+        .btn-primary { background: var(--bkash-pink); color: white; box-shadow: 0 4px 15px rgba(226, 19, 110, 0.3);}
+        .btn-primary:active:not(:disabled) { transform: scale(0.98); box-shadow: none; }
+        .btn-success { background: linear-gradient(135deg, var(--success), #00b85c); color: white; box-shadow: 0 4px 12px rgba(0, 210, 106, 0.3);}
+        .btn-success:active:not(:disabled) { transform: scale(0.98); box-shadow: none; }
+        .btn-outline { background: white; color: var(--text-main); border: 2px solid #E5E5EA; }
+        .btn-action-bot { background: #FFF0F5; color: var(--bkash-pink); font-weight: 800; }
+        .grid-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
+
+        /* STEPS */
+        .step { display: none; animation: fadeIn 0.3s ease;}
+        .step.active { display: block; }
+        @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
+
+        .platform-badge { font-size: 12px; padding: 6px 12px; border-radius: 10px; font-weight: 800; display: inline-block; margin-bottom: 12px;}
+        .badge-tg { background: #E5F0FF; color: var(--tg-blue); }
+        .badge-yt { background: #FFEBEB; color: #FF0000; }
+        .badge-fb { background: #E5F0FF; color: #1877F2; }
+        .badge-web { background: #F0F2F5; color: #606770; }
+        
+        /* PROGRESS BAR GRAPH */
+        .history-item {
+            background: #FFFFFF; padding: 16px; border-radius: 20px; margin-bottom: 12px;
+            border: 1px solid rgba(0,0,0,0.04); box-shadow: 0 4px 15px rgba(0,0,0,0.02);
+        }
+        .progress-bg { width: 100%; height: 8px; background: #F0F2F5; border-radius: 10px; margin-top: 12px; overflow: hidden; }
+        .progress-fill { height: 100%; background: linear-gradient(90deg, var(--bkash-pink), #ff5e9c); border-radius: 10px; transition: width 1s ease; }
+
+        /* INSTRUCTION BOARD */
+        .rules-board {
+            background: #FFF9E6; border: 1px dashed #FFE4B5; padding: 18px; border-radius: 20px; margin-bottom: 25px; box-shadow: inset 0 0 20px rgba(255, 249, 230, 0.5);
+        }
+        .rules-board h4 { color: #B8860B; margin-bottom: 12px; font-size: 15px; font-weight: 800; display: flex; align-items: center; gap: 8px; }
+        .rules-board ul { list-style: none; padding-left: 0; }
+        .rules-board li { font-size: 12px; color: #666; margin-bottom: 8px; display: flex; gap: 8px; align-items: flex-start; line-height: 1.5; font-weight: 600;}
+        .rules-board li::before { content: "✅"; font-size: 10px; margin-top: 2px; }
+
+        /* --- COMPACT BOTTOM NAV --- */
+        .bottom-nav { 
+            position: fixed; bottom: 0; left: 0; width: 100%; 
+            background: var(--glass-bg); backdrop-filter: var(--glass-blur); -webkit-backdrop-filter: var(--glass-blur); 
+            border-top: 1px solid rgba(0,0,0,0.05); display: flex; justify-content: space-around; 
+            padding: 8px 10px 20px 10px; z-index: 50; box-shadow: 0 -5px 20px rgba(0,0,0,0.03);
+        }
+        .nav-item { display: flex; flex-direction: column; align-items: center; gap: 3px; color: var(--text-muted); font-size: 10px; font-weight: 700; cursor: pointer; flex: 1; text-decoration: none;}
+        .nav-icon-box { width: 36px; height: 26px; display: flex; justify-content: center; align-items: center; border-radius: 12px; font-size: 18px; transition: 0.3s; }
+        .nav-item.active { color: var(--bkash-pink); }
+        .nav-item.active .nav-icon-box { background: #FFF0F5; color: var(--bkash-pink); transform: translateY(-2px); }
+    </style>
+</head>
+<body>
+
+    <div class="bkash-header-bg">
+        <div class="header-top">
+            <div class="profile-section">
+                <div class="profile-avatar"><i class="fa-regular fa-user"></i></div>
+                <div>
+                    <div class="greeting">ক্যাম্পেইন প্যানেল</div>
+                    <div class="user-name" id="userNameDisplay">Loading...</div>
+                </div>
+            </div>
+            <div class="balance-badge">
+                <div class="balance-text">
+                    ৳ <span id="headerBalance">0.00</span>
+                    <span class="dynamic-light"></span>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="main-container">
+        
+        <div class="glass-card">
+            <div style="text-align: center; margin-bottom: 20px;">
+                <div style="width: 56px; height: 56px; background: #FFF0F5; color: var(--bkash-pink); border-radius: 16px; display: flex; align-items: center; justify-content: center; font-size: 24px; margin: 0 auto 12px auto;">
+                    <i class="fa-solid fa-rocket"></i>
+                </div>
+                <h3 style="font-size: 18px; font-weight: 800;">নতুন ক্যাম্পেইন তৈরি করুন</h3>
+            </div>
+            
+            <div id="step-1" class="step active">
+                <div class="input-group">
+                    <label class="input-label">যেকোনো সোশ্যাল মিডিয়ার লিংক দিন</label>
+                    <input type="url" id="campaignLink" class="input-field" placeholder="যেমন: https://t.me/username অথবা YouTube লিংক">
+                </div>
+                <button class="btn btn-primary" id="btn-detect" onclick="detectAndProceed()">এনালাইজ ও নেক্সট</button>
+            </div>
+
+            <div id="step-2" class="step">
+                <div class="platform-badge badge-tg" id="detected-type-badge">
+                    <i class="fa-brands fa-telegram"></i> <span id="chat-type-text">চেকিং...</span>
+                </div>
+                
+                <div style="background: #FFF9E6; border: 1px solid #FFE4B5; padding: 16px; border-radius: 16px; margin-bottom: 16px; font-size: 12px; text-align: center; color: #B8860B; font-weight: 600;">
+                    <i class="fa-solid fa-robot" style="font-size: 24px; margin-bottom: 8px;"></i>
+                    <br>দয়া করে আমাদের বটকে আপনার <span id="help-chat-type">চ্যানেলে</span> অ্যাডমিন হিসেবে যুক্ত করুন।
+                </div>
+                
+                <div class="grid-2" style="margin-bottom: 12px;">
+                    <button class="btn btn-outline" onclick="changeStep('step-2', 'step-1')">পেছনে যান</button>
+                    <button class="btn btn-action-bot" id="btnAddBotLink" onclick="openAddBotLink()"><i class="fa-solid fa-plus"></i> বট অ্যাড করুন</button>
+                </div>
+
+                <button class="btn btn-primary" id="btn-check-admin" onclick="checkAdminStatus()" style="padding: 16px; font-size: 16px;">
+                    ভেরিফাই ও কন্টিনিউ <i class="fa-solid fa-arrow-right"></i>
+                </button>
+            </div>
+
+            <div id="step-3" class="step">
+                <div id="step-3-badge-container" style="text-align: center; margin-bottom: 15px;"></div>
+
+                <div class="input-group">
+                    <label class="input-label">
+                        <span>প্রতি ইউজারের রিওয়ার্ড (৳)</span>
+                        <span style="color: var(--bkash-pink); font-size: 11px;">০.৪০৳ - ১০.০০৳</span>
+                    </label>
+                    <input type="number" id="rewardPerUser" class="input-field" placeholder="যেমন: ১.০০" step="0.01" oninput="calculateTotal()">
+                </div>
+                
+                <div class="input-group">
+                    <label class="input-label">
+                        <span>টার্গেট মেম্বার (জন)</span>
+                        <span style="color: var(--tg-blue); font-size: 11px;">মিনিমাম ২০ জন</span>
+                    </label>
+                    <input type="number" id="campaignMembers" class="input-field" placeholder="যেমন: ১০০" oninput="calculateTotal()">
+                </div>
+                
+                <div style="text-align: center; margin-bottom: 20px; background: #F9F9FB; padding: 16px; border-radius: 16px; border: 1px solid rgba(0,0,0,0.04);">
+                    <span style="font-size: 12px; font-weight: 700; color: var(--text-muted); text-transform: uppercase;">সর্বমোট খরচ</span>
+                    <h2 style="color: var(--bkash-pink); font-size: 36px; font-weight: 900; margin-top: 4px; letter-spacing: -1px;">৳ <span id="campaignCost">0.00</span></h2>
+                </div>
+                
+                <button class="btn btn-success" id="btn-launch-campaign" onclick="submitCampaign()">ক্যাম্পেইন শুরু করুন</button>
+                <button class="btn btn-outline" style="margin-top: 10px; border:none; color: var(--text-muted); background: transparent;" onclick="changeStep('step-3', 'step-1')">বাতিল করুন</button>
+            </div>
+        </div>
+        
+        <h3 class="section-title">আপনার লাইভ ক্যাম্পেইন হিস্ট্রি</h3>
+        <div id="myCampaignHistoryList" style="margin-bottom: 20px;">
+            </div>
+
+        <div class="rules-board">
+            <h4><i class="fa-solid fa-shield-halved"></i> নিয়মাবলী ও নিরাপত্তা নির্দেশিকা</h4>
+            <ul>
+                <li>যেকোনো সোশ্যাল মিডিয়ার (টেলিগ্রাম, ইউটিউব, ফেসবুক) লিংক সাপোর্ট করে।</li>
+                <li>লিংক দেওয়ার পর আমাদের স্মার্ট AI অটোমেটিক প্ল্যাটফর্ম ডিটেক্ট করবে।</li>
+                <li>টেলিগ্রামের ক্ষেত্রে বটকে আপনার গ্রুপ/চ্যানেলে অ্যাডমিন দেওয়া বাধ্যতামূলক। অন্যান্য প্ল্যাটফর্মে ভেরিফিকেশন লাগবে না।</li>
+                <li>রিওয়ার্ড <b>০.৪০ ৳</b> থেকে <b>১০.০০ ৳</b> এর মধ্যে হতে হবে। টার্গেট মেম্বার নূন্যতম ২০ জন হতে হবে।</li>
+                <li>এই অ্যাপটি <b>Firebase Server Transaction</b> দ্বারা সুরক্ষিত। কোনো ধরনের হ্যাকিং বা বাইপাস করার চেষ্টা করলে অ্যাকাউন্ট অটোমেটিক সাসপেন্ড হবে।</li>
+            </ul>
+        </div>
+
+    </div>
+
+    <div class="bottom-nav">
+        <a href="index.html" class="nav-item" onclick="safeHapticFeedback('light')">
+            <div class="nav-icon-box"><i class="fa-solid fa-house"></i></div><span>হোম</span>
+        </a>
+        <a href="campaign.html" class="nav-item active" onclick="safeHapticFeedback('light')">
+            <div class="nav-icon-box"><i class="fa-solid fa-layer-group"></i></div><span>ক্যাম্পেইন</span>
+        </a>
+        <a href="wallet.html" class="nav-item" onclick="safeHapticFeedback('light')">
+            <div class="nav-icon-box"><i class="fa-solid fa-wallet"></i></div><span>ওয়ালেট</span>
+        </a>
+    </div>
+
+    <script>
+        // --- Init App ---
+        const tg = window.Telegram.WebApp;
+        tg.ready(); tg.expand();
+        tg.setHeaderColor('#E2136E'); tg.setBackgroundColor('#F4F5F7');
+
+        const firebaseConfig = {
+            apiKey: "AIzaSyAolXMVYn7nLGUz4krYCHHgkBgkBRH4Djk",
+            authDomain: "earnerx-506e1.firebaseapp.com",
+            databaseURL: "https://earnerx-506e1-default-rtdb.asia-southeast1.firebasedatabase.app",
+            projectId: "earnerx-506e1",
+            storageBucket: "earnerx-506e1.firebasestorage.app",
+            messagingSenderId: "868867404959",
+            appId: "1:868867404959:web:c98447df696a9877bf5eaa"
+        };
+        firebase.initializeApp(firebaseConfig);
+        const db = firebase.firestore();
+
+        // --- Bot & AI Config ---
+        const BOT_TOKEN = "8478970348:AAHO85tbFPFBG0bDTah28-07YZGOPYYOKZw";
+        const BOT_ID = BOT_TOKEN.split(':')[0];
+        
+        let currentUser = null;
+        let tgUser = tg.initDataUnsafe.user || { id: "test_dev_001", first_name: "Developer", username: "dev_mode" };
+        let isTestMode = !tg.initDataUnsafe.user;
+        
+        let detectedChatUsername = "";
+        let detectedPlatformType = "unknown";
+        let detectedChatType = "";
+
+        function formatMoney(num) { return parseFloat(num).toFixed(2); }
+        function safeOpenLink(url) { isTestMode ? window.open(url, '_blank') : tg.openLink(url); }
+        function safeHapticFeedback(type) { if (!isTestMode && tg.HapticFeedback) { type === 'success' ? tg.HapticFeedback.notificationOccurred('success') : tg.HapticFeedback.impactOccurred('light'); } }
+
+        // --- Caching System ---
+        function loadCachedUI() {
+            const cachedName = localStorage.getItem('cache_name') || tgUser.first_name;
+            const cachedBal = localStorage.getItem('cache_dep_bal') || '0.00';
+            const cachedHistory = localStorage.getItem('cache_campaign_history');
+            
+            document.getElementById('userNameDisplay').innerText = cachedName + (isTestMode ? " (Test)" : "");
+            document.getElementById('headerBalance').innerText = cachedBal;
+            if(cachedHistory) document.getElementById('myCampaignHistoryList').innerHTML = cachedHistory;
+        }
+        loadCachedUI();
+
+        async function initApp() {
+            const userId = String(tgUser.id);
+            const userRef = db.collection('users').doc(userId);
+
+            userRef.onSnapshot(doc => {
+                if(doc.exists) {
+                    currentUser = doc.data();
+                    localStorage.setItem('cache_name', currentUser.first_name);
+                    localStorage.setItem('cache_dep_bal', formatMoney(currentUser.depositBalance));
+                    document.getElementById('userNameDisplay').innerText = currentUser.first_name + (isTestMode ? " (Test)" : "");
+                    document.getElementById('headerBalance').innerText = formatMoney(currentUser.depositBalance);
+                }
+            });
+            loadMyCampaigns(userId);
+        }
+
+        // --- AI Link & Platform Detection Logic ---
+        function extractTelegramUsername(url) {
+            const regex = /(?:t\.me\/|telegram\.me\/|@)([a-zA-Z0-9_]{5,32})/;
+            const match = url.match(regex);
+            return match ? match[1] : null;
+        }
+
+        async function detectAndProceed() {
+            const link = document.getElementById('campaignLink').value.trim();
+            const btn = document.getElementById('btn-detect');
+            
+            if(!link || !link.startsWith('http')) {
+                Swal.fire({ title: "ভুল লিংক", text: "দয়া করে সঠিক https:// লিংক দিন।", icon: "error", confirmButtonColor: "#E2136E" });
+                return;
+            }
+
+            btn.innerHTML = '<i class="fa-solid fa-spinner fa-spin"></i> এনালাইজ করা হচ্ছে...';
+            btn.disabled = true;
+
+            try {
+                // Check if it's Telegram
+                if(link.includes('t.me') || link.includes('telegram.me')) {
+                    detectedPlatformType = 'telegram';
+                    detectedChatUsername = extractTelegramUsername(link);
+                    
+                    if(detectedChatUsername) {
+                        const res = await fetch(`https://api.telegram.org/bot${BOT_TOKEN}/getChat?chat_id=@${detectedChatUsername}`);
+                        const data = await res.json();
+                        detectedChatType = data.ok ? data.result.type : 'unknown';
+                    } else {
+                        detectedChatType = 'private'; 
+                    }
+                    
+                    setupStep2UI();
+                    changeStep('step-1', 'step-2');
+                } 
+                // Detect Other Platforms (Bypasses Admin check)
+                else {
+                    if(link.includes('youtube.com') || link.includes('youtu.be')) detectedPlatformType = 'youtube';
+                    else if(link.includes('facebook.com') || link.includes('fb.watch')) detectedPlatformType = 'facebook';
+                    else detectedPlatformType = 'website';
+                    
+                    setupStep3Badge();
+                    changeStep('step-1', 'step-3'); // Skip bot verification
+                }
+            } catch(e) {
+                detectedPlatformType = 'unknown';
+                setupStep3Badge();
+                changeStep('step-1', 'step-3');
+            } finally {
+                btn.innerHTML = 'এনালাইজ ও নেক্সট';
+                btn.disabled = false;
+            }
+        }
+
+        function setupStep2UI() {
+            const badge = document.getElementById('detected-type-badge');
+            const helpText = document.getElementById('help-chat-type');
+
+            if(detectedChatType === 'channel') {
+                badge.innerHTML = '<i class="fa-solid fa-bullhorn"></i> টেলিগ্রাম চ্যানেল শনাক্ত হয়েছে';
+                helpText.innerText = 'চ্যানেলে';
+            } else if (detectedChatType === 'supergroup' || detectedChatType === 'group') {
+                badge.innerHTML = '<i class="fa-solid fa-users"></i> টেলিগ্রাম গ্রুপ শনাক্ত হয়েছে';
+                helpText.innerText = 'গ্রুপে';
+            } else {
+                badge.innerHTML = '<i class="fa-solid fa-link"></i> প্রাইভেট/অজানা লিংক';
+                helpText.innerText = 'চ্যানেল বা গ্রুপে';
+            }
+        }
+
+        function setupStep3Badge() {
+            const container = document.getElementById('step-3-badge-container');
+            if(detectedPlatformType === 'youtube') container.innerHTML = `<div class="platform-badge badge-yt"><i class="fa-brands fa-youtube"></i> ইউটিউব লিংক ভেরিফাইড</div>`;
+            else if(detectedPlatformType === 'facebook') container.innerHTML = `<div class="platform-badge badge-fb"><i class="fa-brands fa-facebook"></i> ফেসবুক লিংক ভেরিফাইড</div>`;
+            else if(detectedPlatformType === 'telegram') container.innerHTML = `<div class="platform-badge badge-tg"><i class="fa-brands fa-telegram"></i> টেলিগ্রাম ভেরিফাইড</div>`;
+            else container.innerHTML = `<div class="platform-badge badge-web"><i class="fa-solid fa-globe"></i> ওয়েবসাইট লিংক ভেরিফাইড</div>`;
+        }
+
+        function openAddBotLink() {
+            let url = `https://t.me/Bkash_Money_Cashh_bot`;
+            if(detectedChatType === 'channel') url += `?startchannel=true`;
+            else url += `?startgroup=true`;
+            safeOpenLink(url);
+        }
+
+        async function checkAdminStatus() {
+            const btn = document.getElementById('btn-check-admin');
+            
+            if(!detectedChatUsername || detectedChatType === 'private' || detectedChatType === 'unknown') {
+                setupStep3Badge();
+                changeStep('step-2', 'step-3');
+                return;
+            }
+
+            btn.innerHTML = '<i class="fa-solid fa-spinner fa-spin"></i> ভেরিফাই করা হচ্ছে...';
+            btn.disabled = true;
+
+            try {
+                const res = await fetch(`https://api.telegram.org/bot${BOT_TOKEN}/getChatMember?chat_id=@${detectedChatUsername}&user_id=${BOT_ID}`);
+                const data = await res.json();
+
+                if(data.ok && (data.result.status === 'administrator' || data.result.status === 'creator')) {
+                    safeHapticFeedback('success');
+                    setupStep3Badge();
+                    changeStep('step-2', 'step-3');
+                } else {
+                    showAdminErrorAlert();
+                }
+            } catch(e) {
+                showAdminErrorAlert();
+            } finally {
+                btn.innerHTML = 'ভেরিফাই ও কন্টিনিউ <i class="fa-solid fa-arrow-right"></i>';
+                btn.disabled = false;
+            }
+        }
+
+        function showAdminErrorAlert() {
+            safeHapticFeedback('error');
+            Swal.fire({
+                title: "অ্যাডমিন পাওয়া যায়নি!",
+                html: `আমাদের বটটি আপনার চ্যাটে নেই অথবা অ্যাডমিন হিসেবে যুক্ত নেই।<br><br>
+                       <span style="font-size:12px; color:#E2136E; cursor:pointer;" onclick="safeOpenLink('https://t.me/Bkash_Money_Cashh_bot')">
+                       👉 <b>কীভাবে অ্যাড করবেন বুঝতে না পারলে এখানে ক্লিক করুন</b>
+                       </span>`,
+                icon: "error",
+                confirmButtonColor: "#E2136E"
+            });
+        }
+
+        // --- Step Controller ---
+        function changeStep(from, to) {
+            document.getElementById(from).classList.remove('active');
+            document.getElementById(to).classList.add('active');
+            safeHapticFeedback('light');
+        }
+
+        function calculateTotal() {
+            const reward = parseFloat(document.getElementById('rewardPerUser').value) || 0;
+            const members = parseInt(document.getElementById('campaignMembers').value) || 0;
+            const total = reward * members;
+            document.getElementById('campaignCost').innerText = formatMoney(total);
+            return total;
+        }
+
+        // --- Super Security: Firebase Transactions ---
+        async function submitCampaign() {
+            const link = document.getElementById('campaignLink').value;
+            const reward = parseFloat(document.getElementById('rewardPerUser').value);
+            const members = parseInt(document.getElementById('campaignMembers').value);
+            const totalCost = reward * members;
+
+            // Strict Validation Rules
+            if(!reward || isNaN(reward) || reward < 0.40 || reward > 10.00) {
+                Swal.fire({ title: "সতর্কতা", text: "রিওয়ার্ড ০.৪০ ৳ থেকে ১০.০০ ৳ এর মধ্যে হতে হবে।", icon: "warning", confirmButtonColor: "#E2136E" });
+                return;
+            }
+            if(!members || isNaN(members) || members < 20) {
+                Swal.fire({ title: "সতর্কতা", text: "টার্গেট মেম্বার নূন্যতম ২০ জন হতে হবে।", icon: "warning", confirmButtonColor: "#E2136E" });
+                return;
+            }
+
+            const btn = document.getElementById('btn-launch-campaign');
+            btn.disabled = true; btn.innerText = "সার্ভার প্রসেসিং...";
+
+            try {
+                // Firebase Database Transaction (High Security)
+                await db.runTransaction(async (transaction) => {
+                    const userRef = db.collection('users').doc(currentUser.userId);
+                    const userDoc = await transaction.get(userRef);
+                    
+                    if (!userDoc.exists) throw "User not found";
+                    const currentDeposit = userDoc.data().depositBalance || 0;
+                    
+                    if (currentDeposit < totalCost) throw "Insufficient Balance";
+
+                    const campRef = db.collection('campaigns').doc();
+                    
+                    transaction.update(userRef, { depositBalance: firebase.firestore.FieldValue.increment(-totalCost) });
+                    transaction.set(campRef, {
+                        id: campRef.id,
+                        creatorId: currentUser.userId,
+                        link: link,
+                        platformType: detectedPlatformType,
+                        rewardPerUser: reward,
+                        targetMembers: members,
+                        completedMembers: 0,
+                        status: 'active',
+                        createdAt: firebase.firestore.FieldValue.serverTimestamp()
+                    });
+                });
+
+                safeHapticFeedback('success');
+                Swal.fire({ title: "সফল হয়েছে!", text: "আপনার ক্যাম্পেইন সফলভাবে চালু হয়েছে!", icon: "success", confirmButtonColor: "#E2136E" });
+                
+                document.getElementById('campaignLink').value = '';
+                document.getElementById('rewardPerUser').value = '';
+                document.getElementById('campaignMembers').value = '';
+                document.getElementById('campaignCost').innerText = '0.00';
+                changeStep('step-3', 'step-1');
+                
+            } catch (error) {
+                if (error === "Insufficient Balance") {
+                    Swal.fire({ 
+                        title: "ব্যালেন্স নেই!", text: "ডিপোজিট ব্যালেন্সে পর্যাপ্ত টাকা নেই। দয়া করে ডিপোজিট করুন।", icon: "error", confirmButtonColor: "#E2136E" 
+                    }).then(() => { window.location.href = "wallet.html"; });
+                } else {
+                    Swal.fire({ title: "সমস্যা হয়েছে!", text: "ট্রানজেকশন ফেইল হয়েছে। আবার চেষ্টা করুন।", icon: "error", confirmButtonColor: "#E2136E" });
+                }
+            } finally {
+                btn.disabled = false; btn.innerText = "ক্যাম্পেইন শুরু করুন";
+            }
+        }
+
+        // --- Graph History Builder ---
+        function loadMyCampaigns(userId) {
+            db.collection('campaigns').where('creatorId', '==', userId).orderBy('createdAt', 'desc').onSnapshot(snapshot => {
+                const container = document.getElementById('myCampaignHistoryList');
+                let htmlCache = '';
+                
+                if(snapshot.empty) {
+                    htmlCache = `
+                        <div class="glass-card" style="text-align: center; color: var(--text-muted); font-size: 13px; padding: 30px 0;">
+                            <i class="fa-solid fa-folder-open" style="font-size: 32px; margin-bottom: 10px; opacity: 0.3;"></i><br>
+                            কোনো ক্যাম্পেইন পাওয়া যায়নি
+                        </div>`;
+                } else {
+                    snapshot.forEach(doc => {
+                        const camp = doc.data();
+                        const progress = Math.min(Math.round((camp.completedMembers / camp.targetMembers) * 100), 100);
+                        const isDone = progress >= 100;
+                        
+                        let icon = 'fa-link'; let color = 'var(--text-muted)'; let pName = 'Website';
+                        if(camp.platformType === 'telegram') { icon = 'fa-telegram'; color = 'var(--tg-blue)'; pName = 'Telegram'; }
+                        else if(camp.platformType === 'youtube') { icon = 'fa-youtube'; color = '#FF0000'; pName = 'YouTube'; }
+                        else if(camp.platformType === 'facebook') { icon = 'fa-facebook'; color = '#1877F2'; pName = 'Facebook'; }
+                        
+                        htmlCache += `
+                            <div class="history-item">
+                                <div style="display: flex; justify-content: space-between; align-items: flex-end;">
+                                    <div>
+                                        <div style="font-size: 14px; font-weight: 800; color: var(--text-main); margin-bottom: 4px;">
+                                            <i class="fa-brands ${icon}" style="color:${color}; margin-right:4px;"></i> ${pName} Campaign
+                                        </div>
+                                        <div style="font-size: 11px; color: var(--text-muted); font-weight: 600;">সম্পন্ন: ${camp.completedMembers}/${camp.targetMembers} জন</div>
+                                    </div>
+                                    <div style="text-align: right;">
+                                        <div style="font-size: 14px; font-weight: 900; color: ${isDone ? 'var(--success)' : 'var(--bkash-pink)'};">${progress}%</div>
+                                        <div style="font-size: 10px; color: var(--text-muted); margin-top: 2px; font-weight: 600;">Cost: ৳${formatMoney(camp.rewardPerUser * camp.targetMembers)}</div>
+                                    </div>
+                                </div>
+                                <div class="progress-bg">
+                                    <div class="progress-fill" style="width: ${progress}%; background: ${isDone ? 'var(--success)' : ''}"></div>
+                                </div>
+                            </div>
+                        `;
+                    });
+                }
+                
+                container.innerHTML = htmlCache;
+                localStorage.setItem('cache_campaign_history', htmlCache);
+            });
+        }
+
+        initApp();
+    </script>
+</body>
+</html>
