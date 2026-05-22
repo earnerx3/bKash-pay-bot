@@ -40,6 +40,12 @@
 
         .main-container { margin-top: -45px; padding: 0 16px; position: relative; z-index: 10; }
 
+        /* Notice Card Style Added Back */
+        .notice-card { background: #ffffff; border-radius: 20px; padding: 16px; margin-bottom: 20px; box-shadow: 0 8px 25px rgba(226, 19, 110, 0.08); border: 1px solid rgba(226, 19, 110, 0.05); display: flex; align-items: flex-start; gap: 14px; }
+        .notice-icon { width: 44px; height: 44px; background: #FFF0F5; color: var(--bkash-pink); border-radius: 12px; display: flex; justify-content: center; align-items: center; font-size: 20px; flex-shrink: 0; }
+        .notice-content h4 { font-size: 14px; color: var(--text-main); font-weight: 800; margin-bottom: 4px; }
+        .notice-content p { font-size: 11px; color: var(--text-muted); line-height: 1.5; font-weight: 600; }
+
         .section-title { font-size: 13px; font-weight: 800; color: #6e6e73; text-transform: uppercase; margin: 10px 4px 12px 4px; letter-spacing: 0.5px; }
 
         /* TASK LIST UI */
@@ -62,26 +68,9 @@
             box-shadow: 0 4px 15px rgba(226, 19, 110, 0.08) !important;
             animation: border-pulse 2s infinite alternate;
         }
-        @keyframes border-pulse {
-            0% { border-color: rgba(226, 19, 110, 0.3); }
-            100% { border-color: rgba(226, 19, 110, 0.8); }
-        }
-        .ad-task-badge {
-            background: #FF9500;
-            color: white;
-            font-size: 9px;
-            font-weight: 900;
-            padding: 2px 6px;
-            border-radius: 4px;
-            text-transform: uppercase;
-            margin-left: 6px;
-            animation: badge-pulse 1.5s infinite;
-        }
-        @keyframes badge-pulse {
-            0% { transform: scale(1); }
-            50% { transform: scale(1.08); }
-            100% { transform: scale(1); }
-        }
+        @keyframes border-pulse { 0% { border-color: rgba(226, 19, 110, 0.3); } 100% { border-color: rgba(226, 19, 110, 0.8); } }
+        .ad-task-badge { background: #FF9500; color: white; font-size: 9px; font-weight: 900; padding: 2px 6px; border-radius: 4px; text-transform: uppercase; margin-left: 6px; animation: badge-pulse 1.5s infinite; }
+        @keyframes badge-pulse { 0% { transform: scale(1); } 50% { transform: scale(1.08); } 100% { transform: scale(1); } }
 
         .bottom-nav { position: fixed; bottom: 0; left: 0; width: 100%; background: var(--glass-bg); backdrop-filter: blur(10px); -webkit-backdrop-filter: blur(10px); border-top: 1px solid rgba(0,0,0,0.05); display: flex; justify-content: space-around; padding: 8px 10px 20px 10px; z-index: 50; box-shadow: 0 -5px 20px rgba(0,0,0,0.03); }
         .nav-item { display: flex; flex-direction: column; align-items: center; gap: 3px; color: var(--text-muted); font-size: 10px; font-weight: 700; cursor: pointer; flex: 1; text-decoration: none;}
@@ -89,7 +78,7 @@
         .nav-item.active { color: var(--bkash-pink); }
         .nav-item.active .nav-icon-box { background: #FFF0F5; color: var(--bkash-pink); transform: translateY(-2px); }
 
-        /* --- BOTTOM SHEET --- */
+        /* BOTTOM SHEET */
         .bottom-sheet-overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.4); backdrop-filter: blur(3px); z-index: 100; display: none; align-items: flex-end; opacity: 0; transition: opacity 0.3s ease; }
         .bottom-sheet-overlay.active { display: flex; opacity: 1; }
         .bottom-sheet { background: #fff; width: 100%; border-radius: 30px 30px 0 0; padding: 24px; padding-bottom: max(24px, env(safe-area-inset-bottom)); transform: translateY(100%); transition: transform 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275); box-shadow: 0 -10px 40px rgba(0,0,0,0.1); max-height: 90vh; overflow-y: auto; }
@@ -130,31 +119,46 @@
 
     <div class="main-container">
         
-        <div class="section-title">টাস্ক কমপ্লিট করুন</div>
-        
-        <!-- PREMIUM MONETAG AD TASK -->
-        <div class="task-box ad-task-box" id="monetagAdBox" onclick="triggerMonetagAd()" style="margin-bottom: 12px;">
-            <div class="task-icon-wrapper" style="background: var(--bkash-pink); color: white;">
-                <i class="fa-solid fa-circle-play"></i>
-            </div>
-            <div class="task-info">
-                <div class="task-title" style="color: var(--bkash-pink); font-weight: 900; display: flex; align-items: center; gap: 4px;">
-                    স্পেশাল অ্যাড বোনাস <span id="fridayBadge" class="ad-task-badge" style="display:none;">Friday</span>
-                </div>
-                <div class="task-desc-short" id="adDescText">১৫ সেকেন্ড অ্যাড দেখে রেওয়ার্ড ক্লেইম করুন</div>
-            </div>
-            <div>
-                <div class="task-reward" style="background: #00d26a; box-shadow: 0 4px 10px rgba(0, 210, 106, 0.2); font-size: 13px;">
-                    + <span id="adRewardAmountText">০.১০</span> ৳
-                </div>
+        <!-- সুন্দর নোটিশ কার্ডটি এখানে ফিরিয়ে আনা হয়েছে -->
+        <div class="notice-card">
+            <div class="notice-icon"><i class="fa-solid fa-bolt"></i></div>
+            <div class="notice-content">
+                <h4>Welcome to Bkash Pay Bot</h4>
+                <p>Complete tasks daily to earn instant rewards. Withdraw your earnings securely via bKash or Nagad. Stay active for more campaigns!</p>
             </div>
         </div>
 
-        <div class="task-list" id="taskListContainer">
-            <div style="text-align:center; color:var(--text-muted); font-size:13px; padding: 40px 0; font-weight: 600;">
-                <i class="fa-solid fa-spinner fa-spin" style="font-size: 26px; color: var(--bkash-pink); margin-bottom: 12px;"></i><br>
-                নতুন টাস্ক লোড হচ্ছে...
+        <div class="section-title">টাস্ক কমপ্লিট করুন</div>
+        
+        <!-- টাস্ক লিস্টের কন্টেইনার -->
+        <div class="task-list">
+            
+            <!-- স্পেশাল অ্যাড টাস্কটি এখানে লিস্টের অংশ হিসেবে বসানো হয়েছে -->
+            <div class="task-box ad-task-box" id="monetagAdBox" onclick="triggerMonetagAd()">
+                <div class="task-icon-wrapper" style="background: var(--bkash-pink); color: white;">
+                    <i class="fa-solid fa-circle-play"></i>
+                </div>
+                <div class="task-info">
+                    <div class="task-title" style="color: var(--bkash-pink); font-weight: 900; display: flex; align-items: center; gap: 4px;">
+                        স্পেশাল অ্যাড বোনাস <span id="fridayBadge" class="ad-task-badge" style="display:none;">Friday</span>
+                    </div>
+                    <div class="task-desc-short" id="adDescText">১৫ সেকেন্ড অ্যাড দেখে রেওয়ার্ড ক্লেইম করুন</div>
+                </div>
+                <div>
+                    <div class="task-reward" style="background: #00d26a; box-shadow: 0 4px 10px rgba(0, 210, 106, 0.2); font-size: 13px;">
+                        + <span id="adRewardAmountText">০.১০</span> ৳
+                    </div>
+                </div>
             </div>
+
+            <!-- ডাইনামিক টাস্কগুলো এই ডিভের ভেতর লোড হবে -->
+            <div id="taskListContainer" style="display: flex; flex-direction: column; gap: 12px;">
+                <div style="text-align:center; color:var(--text-muted); font-size:13px; padding: 40px 0; font-weight: 600;">
+                    <i class="fa-solid fa-spinner fa-spin" style="font-size: 26px; color: var(--bkash-pink); margin-bottom: 12px;"></i><br>
+                    নতুন টাস্ক লোড হচ্ছে...
+                </div>
+            </div>
+
         </div>
     </div>
 
@@ -207,8 +211,7 @@
             </div>
         </div>
     </div>
-
-    <script>
+<script>
         const tg = window.Telegram.WebApp;
         tg.ready();
         tg.expand();
@@ -425,8 +428,7 @@
                 Swal.fire("এরর", "ডাটাবেজ আপডেট করা যায়নি।", "error");
             }
         }
-
-        // --- TASK ENGINE ---
+// --- TASK ENGINE ---
         function startTaskListener() {
             const container = document.getElementById('taskListContainer');
 
@@ -551,8 +553,7 @@
                 }
             }, 1000);
         }
-
-        // --- TELEGRAM VERIFICATION ---
+// --- TELEGRAM VERIFICATION ---
         async function initiateSecureTask() {
             if(!activeTaskContext || isTaskProcessing) return;
             const ctx = activeTaskContext;
